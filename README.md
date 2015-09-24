@@ -39,11 +39,12 @@ In some ways, it is the fusion of **typeof** and **instanceof**
 ```
 #### Through an object
 ###### basic:
-You can retrieve the type or compare the type with one or several types.
+You can retrieve the type or compare it with a string representing an expecting type.
 ```js
-typeOf('test').getType(); //return 'String' (see typeOf only below);
+typeOf('test').getType(); //return 'String' (see 'typeOf only' below);
 
-typeOf('lolipop').in('String'); //return true
+//return a Boolean, in these cases: true.
+typeOf('lolipop').in('String');
 typeOf(null).in('Null');
 typeOf(undefined).in('Undefined');
 typeOf(NaN).in('NaN');
@@ -54,7 +55,6 @@ typeOf(NaN).in('NaN');
 You might also want to compare your value with a set of different types.
 
 ```js
-
 //using an Array (better performance)
 typeOf('lolipop').in(['Number', 'String', 'Object','Array']);
 //or multiple arguments
@@ -67,7 +67,7 @@ Furthermore, typeof-in also supports Regex against your value, which is quite us
 typeOf(new TypeError()).in(/.+Error$/); //is an error other than 'Error' type
 ```
 
-###### ES6 and others:
+###### ES6 and others objects:
 This library can check all kind of objects. Allowing you to compare *ES6* features like Promises, Generators, fat arrows... which is pretty neat.
 ```js
 typeOf(new Promise(function(){}).in('Promise')
@@ -100,10 +100,10 @@ In some case, especially when the initial value passed in typeOf is not an Objec
 //with contructors
 typeOf('lolipop').in([Number,String,Promise,Boolean,GeneratorFunction,Iterator,Function,Array,Error,Object,Symbol])
 
-//with random values
-// /!\ Strings and arrays must absolutely be empty! ('' & [])
+//with random values, however: strings and arrays must absolutely be empty! ('' & [])
 typeOf(1).in([null,undefined,NaN,[], {}, 42,'',function*(){}, function hi(){console.log('hellow world')}]); 
-//type of 1 === type of 42 
+//is equal to
+typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number',GeneratorFunction','Function'])
 ```
 
 ###### dealing with instanceof:
@@ -125,17 +125,17 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     var person2 = new Person2();  
     
     //#instance against instance
-    typeOf(person).in(_person); //return true
-    typeOf(person).in(__person); //return true    
-    typeOf(person).in(person2); //return false
+    typeOf(person).in(_person); //true
+    typeOf(person).in(__person); //true    
+    typeOf(person).in(person2); //false
     
     //#instance against prototype
-    typeOf(person).in(Person); //return true   
-    typeOf(person).in(Human); //return true
-    typeOf(person2).in(Human); //return false
-    typeOf(person2).in('Human'); //return true
-    typeOf(person2).in(Object); //return true
-    typeOf(person2).in('Object'); //return true
+    typeOf(person).in(Person); //true   
+    typeOf(person).in(Human); //true
+    typeOf(person2).in(Human); //false
+    typeOf(person2).in('Human'); //true
+    typeOf(person2).in(Object); //true
+    typeOf(person2).in('Object'); //true
     
     typeOf(person).getType(); // return 'Human'
     typeOf(person2).getType(); //return 'Human'
@@ -145,10 +145,10 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     //#special cases: instance of Anonymous (it behaves like examples above)
     var myAnonymous = function(){};
     typeOf(new(function (){})).getType(); //return '#Anonymous'
-    typeOf(new (myAnonymous)).in('#Anonymous') //return true
-    typeOf(new (myAnonymous)).in(myAnonymous) //return true
-    typeOf(new (myAnonymous)).in(Object) //return true
-    typeOf(new (myAnonymous)).in(new(function(){})) //return false
+    typeOf(new (myAnonymous)).in('#Anonymous') //true
+    typeOf(new (myAnonymous)).in(myAnonymous) //true
+    typeOf(new (myAnonymous)).in(Object) //true
+    typeOf(new (myAnonymous)).in(new(function(){})) //false
     
 ```
 
