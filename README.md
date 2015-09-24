@@ -49,6 +49,19 @@ typeOf(null).in('Null');
 typeOf(undefined).in('Undefined');
 typeOf(NaN).in('NaN');
 ```
+Concerning NaN values:
+```js
+//do not use instanceof:
+typeOf(NaN).in('NaN'); //true
+typeOf(NaN).in('Number'); //false
+typeOf(NaN).in(Number); //false 
+typeOf(new Number(NaN)).in('NaN'); //true
+typeOf(new Number(NaN)).in('Number'); //false
+
+//use instanceof:
+typeOf(new Number(NaN)).in(Number); //true
+typeOf(new Number(NaN)).in(Object); //true
+```
 
 ###### multi:
 
