@@ -48,19 +48,7 @@ typeOf('lolipop').in('String');
 typeOf(null).in('Null');
 typeOf(undefined).in('Undefined');
 typeOf(NaN).in('NaN');
-```
-Concerning NaN values:
-```js
-//do not use instanceof:
-typeOf(NaN).in('NaN'); //true
-typeOf(NaN).in('Number'); //false
-typeOf(NaN).in(Number); //false 
-typeOf(new Number(NaN)).in('NaN'); //true
-typeOf(new Number(NaN)).in('Number'); //false
-
-//use instanceof:
-typeOf(new Number(NaN)).in(Number); //true
-typeOf(new Number(NaN)).in(Object); //true
+typeOf(new Number(NaN)).in('NaN');
 ```
 
 ###### multi:
@@ -106,8 +94,9 @@ if(myType.in('String')){
 ###### some other tricks:
 *it might impact performance*
 
-In some case, especially when the initial value passed in typeOf is not an Object, typeof-in will try to retrieve the constructor name (as a string) passed in its **in()** method when necessary. 
+If the value passed inside typeOf is not an Object, its **in()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value.
 
+Therefore, you can use typeOf-in like this:
 ```js
 //with contructors
 typeOf('lolipop').in([Number,String,Promise,Boolean,GeneratorFunction,Iterator,Function,Array,Error,Object,Symbol])
@@ -115,7 +104,7 @@ typeOf('lolipop').in([Number,String,Promise,Boolean,GeneratorFunction,Iterator,F
 //with random values, however: strings and arrays must absolutely be empty! ('' & [])
 typeOf(1).in([null,undefined,NaN,[], {}, 42,'',function*(){}, function hi(){console.log('hellow world')}]); 
 //is equal to
-typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number',GeneratorFunction','Function'])
+typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number','GeneratorFunction','Function'])
 ```
 
 ###### dealing with instanceof:
@@ -125,7 +114,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
 ```js
     typeOf(new String('test')).in(String)
     typeOf({}).in(Object)
-    typeOf([]).in(Object) //return true! you might want to use a string 'Array'
+    typeOf([]).in(Object) //return true! an Array is an Object.
     
     //OR
 
@@ -156,7 +145,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     typeOf(new(function $(){})).getType(); //return '$'
     typeOf(new(function _(){})).getType(); //return '_'
     
-    //#special cases: instance of Anonymous (it behaves like examples above)
+    //#special cases: instance of Anonymous (it behaves as the above examples)
     var myAnonymous = function(){};
     typeOf(new(function (){})).getType(); //return '#Anonymous'
     typeOf(new (myAnonymous)).in('#Anonymous') //true
