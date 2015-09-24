@@ -111,11 +111,12 @@ The following examples show different cases when typeof-in will use instanceof t
 
 However, the library will not return an empty string('') but a "#Anonymous" value in the case of an instance of an anonymous prototype. 
 ```js
-    /* 
-        with ES6 classes:
-        class Human {}
-    */
-    function Human(){};
+    typeOf(new String('test')).in(String)
+    typeOf({}).in(Object)
+    
+    //OR
+
+    function Human(){}; // ES6: class Human {}
     var Person = Human;
     var Person2 = function Human(){};
 
