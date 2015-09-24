@@ -1,0 +1,38 @@
+{
+  "name": "typeof-in",
+  "version": "3.0.0",
+  "description": "compare the type of your value with one or several types",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "node ./test/typeOf-test.js && node ./test/typeOf-in-test.js | tap-nyan",
+    "typein-test": "node ./test/typeOf-in-test.js",
+    "type-test": "node ./test/typeOf-test.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/d-mon-/typeOf.git"
+  },
+  "keywords": [
+    "typeof",
+    "instanceof",
+    "prototype",
+    "type-of",
+    "checker",
+    "type",
+    "in",
+    "assert"
+  ],
+  "author": "guerin olivier",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/d-mon-/typeOf/issues"
+  },
+  "homepage": "https://github.com/d-mon-/typeOf#readme",
+  "devDependencies": {
+    "tap-nyan": "0.0.2",
+    "tape": "^4.2.0"
+  }
+}
