@@ -92,15 +92,14 @@ typeOf(()=>{}).in('Function')
 This is the main advantage of using typeof-in through an object, it allows you to hit the same value in different ways
 ```js
 //call the "in" method several times
-var myType = typeOf('test');
 if(myType.in('String')){
     //do something with value as a string
-}else if(myType.in('TypeError')){
-    //type error ? 
+}else if(myType.in(['Null','Undefined'])){
+    //you need to init your value!
 }else if(myType.in(/.+Error$/)){
-    //something bad happened! but not a global error...
+    //something bad happened! but not a global error
 }else if(myType.in(Error)){
-    //global error handler
+    //global error handler... :(
 }
 ```
 
