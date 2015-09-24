@@ -32,7 +32,7 @@ function TypeOfBuilder(value) {
         switch (_type) {
             case 'String':
                 if (arg) {
-                    return (arg === 'Object') ? _isObj : type === arg
+                    return (arg === 'Object' && type !== 'Array') ? _isObj : type === arg
                 }
                 return type === 'String';
             case 'Function':

@@ -92,8 +92,15 @@ test('array', function (assert) {
     actual = typeOf([42]).in([]);
     assert.equal(actual, expected, "typeOf([42]).in([]) should return true");
 
-    actual = typeOf(new Array(42)).in(Array);
+    actual = typeOf([42]).in(Array);
     assert.equal(actual, expected, "typeOf(new Array(42)).in(Array) should return true");
+
+    //regression test
+    actual = typeOf([42]).in('Object');
+    assert.equal(actual, !expected, "typeOf([42]).in('Object') should return false");
+
+    actual = typeOf([42]).in(Object);
+    assert.equal(actual, expected, "typeOf([42]).in(Object) should return true");
 
     assert.end();
 })

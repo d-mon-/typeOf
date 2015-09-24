@@ -125,6 +125,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
 ```js
     typeOf(new String('test')).in(String)
     typeOf({}).in(Object)
+    typeOf([]).in(Object) //return true! you might want to use a string 'Array'
     
     //OR
 
