@@ -44,13 +44,16 @@ test('number', function (assert) {
     assert.equal(actual, expected, "typeOf(42).in(666) should return true");
 
     actual = typeOf(3.14).in(Number);
-    assert.equal(actual, expected, "typeOf(3.14).in(Number) should return false");
+    assert.equal(actual, expected, "typeOf(3.14).in(Number) should return true");
 
-    actual = typeOf(0 / 0).in('NaN');
+    actual = typeOf(NaN).in('NaN');
     assert.equal(actual, expected, "typeOf(NaN).in('NaN') should return true");
 
-    actual = typeOf(0 / 0).in(NaN);
+    actual = typeOf(NaN).in(NaN);
     assert.equal(actual, expected, "typeOf(NaN).in(NaN) should return true");
+
+    actual = typeOf(NaN).in(Number);
+    assert.equal(actual, !expected, "typeOf(NaN).in(Number) should return false");
 
     actual = typeOf(new Number(42)).in('Number');
     assert.equal(actual, expected, "typeOf(new Number(42)).in('Number') should return true");
@@ -106,7 +109,17 @@ test('array', function (assert) {
     assert.equal(actual, expected, "typeOf([42]).in(Object) should return true");
 
     assert.end();
-})
+});
+
+test('regex', function (assert) {
+    var expected = true;
+    var actual = typeOf(/test/).in('RegExp');
+    assert.equal(actual, expected, "typeOf(/test/).in('RegExp') should return true");
+
+    actual = typeOf(/test/).in(RegExp);
+    assert.equal(actual, expected, "typeOf(/test/).in(RegExp) should return true");
+    assert.end();
+});
 
 test('object', function (assert) {
     function Personnage() {

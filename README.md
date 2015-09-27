@@ -220,6 +220,8 @@ switch(typeOf('test')){
 > npm run type-test
 
 #### *words of advice*
+for more example, see test folder.
+
 _index.js_ : *ES6*  => use babel or --harmony (node.js < v4.0.0) if necessary
 
 you might need to polyfill Object.getPrototypeOf() for cross-browser compatibility too (cf: IE < 9).
