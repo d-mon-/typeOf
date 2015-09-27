@@ -2,11 +2,22 @@
 allow you to compare the type (or instance) of your value with several types (or constructor), and finally return a **Boolean**.
 
 ## Why use typeof-in ? 
-#### It supports:
+#### JS is, somehow, broken
+typeof null === 'object', but null instanceof Object return false
+
+typeof /regularexpression/ === 'object', we would expect 'regexp'
+
+new Number(42) and 42 have the same constructor name, but are completely different. (String and Boolean have the same "problem")
+
+typeof NaN === 'number', Why ?!
+typeof (new Number(NaN)) === 'object', which doesn't help more...
+
+#### typeof-in supports:
 - Regex
 - Multi choices
-- both: new String('test') and 'test' return the same type (String) 
-- it handles NaN, Undefined, Null types
+- both: new String('test') and 'test' return the same type
+- same thing with *Numbers* and *Booleans*
+- NaN, Undefined, Null values have their own types 
 - use instanceof when necessary: typeOf(instance).in(constructor)
 - and more!
 
@@ -27,11 +38,11 @@ In some ways, it is the fusion of **typeof** and **instanceof**
 >
 > - Array / ArrayBuffer / UInt32Array / (Weak)Map / (Weak)Set / ...
 >
-> - built-in Objects in general (even those that do not exist yet)
+> - built-in Objects like JSON and Math
 >
 >   and many more... (in fact, you can check almost everything)
 
-[built-in Objects](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
+[JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
 
 ## Use cases:
 ```js
@@ -63,7 +74,9 @@ typeOf('lolipop').in('Number', 'String', 'Object', 'Array');
 ```
 
 ###### regex:
-Furthermore, typeof-in also supports Regex against your value, which is quite useful with < ****Error> types for example. [about Error types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+Furthermore, typeof-in also supports Regex against your value, 
+
+which is quite useful with < ****Error> types for example. [about Error types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 ```js
 typeOf(new TypeError()).in(/.+Error$/); //is an error other than 'Error' type
 ```
@@ -77,11 +90,12 @@ typeOf(()=>{}).in('Function')
 ```
 
 ###### calling several times:
-This is the main advantage of using typeof-in through an object, it allows you to hit the same value in different ways
+This is the main advantage of using typeof-in through an object, it allows you to deal with the same value in different ways
 ```js
+var myType = typeOf('test');
 //call the "in" method several times
 if(myType.in('String')){
-    //do something with value as a string
+    //do something with the value as a string
 }else if(myType.in(['Null','Undefined'])){
     //you need to init your value!
 }else if(myType.in(/.+Error$/)){
@@ -112,9 +126,14 @@ The following examples show different cases when typeof-in will use instanceof t
 
 However, the library will not return an empty string('') but a "#Anonymous" value in the case of an instance of an anonymous prototype. 
 ```js
+    //with primitive value, if the type passed in "in()" is a constructor, then typeof-in will retrieve its constructor name
+    typeOf(42).in(Number)  // is equal to typeOf(42).in('Number')
+    typeOf(new Number(42)).in(Number) //will use instanceof
+
     typeOf(new String('test')).in(String)
     typeOf({}).in(Object)
-    typeOf([]).in(Object) //return true! an Array is an Object.
+    typeOf([]).in(Object)   //return true! an Array is an instance of Object. however
+    typeOf([]).in('Object') //return false
     
     //OR
 
@@ -138,7 +157,6 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     typeOf(person2).in(Human); //false
     typeOf(person2).in('Human'); //true
     typeOf(person2).in(Object); //true
-    typeOf(person2).in('Object'); //true
     
     typeOf(person).getType(); // return 'Human'
     typeOf(person2).getType(); //return 'Human'
@@ -161,7 +179,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
 
 The recent version of typeof-in (>= 3.0.0) allows you to directly call the function in charge of the comparison, and by extension, not create an object every time you use typeOf() in your code. 
 
-This feature works exactly like the previous examples. however, you cannot retrieve the type.
+This feature works exactly like the previous examples. however, you cannot retrieve the type with **getType()**.
 
 ```js
 typeOf('lolipop','String'); 
@@ -202,12 +220,10 @@ switch(typeOf('test')){
 > npm run type-test
 
 #### *words of advice*
+_index.js_ : *ES6*  => use babel or --harmony (node.js < v4.0.0) if necessary
 
-_index.js_ : *ES6*  (for..of , const and let) => use babel if necessary
-
-you might need to polyfill Object.getPrototypeOf() for cross-browser compatibility
+you might need to polyfill Object.getPrototypeOf() for cross-browser compatibility too (cf: IE < 9).
 
 _typeOf.js_ : *ES5*
- 
     
 Finally, I'm open to any suggestions

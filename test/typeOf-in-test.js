@@ -24,6 +24,9 @@ test('null/undefined', function (assert) {
     actual = typeOf(null).in(null);
     assert.equal(actual, expected, "typeOf(null).in('Null') should return true");
 
+    actual = typeOf(null).in('Object');
+    assert.equal(actual, !expected, "typeOf(null).in({}) should return false");
+
     actual = typeOf(undefined).in('Undefined');
     assert.equal(actual, expected, "typeOf(undefined).in('Undefined') should return true");
 
@@ -150,7 +153,7 @@ test('object', function (assert) {
     assert.equal(actual, expected, "typeOf(person2).in('Personnage') should return true");
 
     actual = typeOf(person2).in('Object');
-    assert.equal(actual, expected, "typeOf(person2).in('Object') should return true");
+    assert.equal(actual, !expected, "typeOf(person2).in('Object') should return false");
 
     actual = typeOf(person2).in(Object);
     assert.equal(actual, expected, "typeOf(person2).in('Object') should return true");
@@ -190,6 +193,22 @@ test('generator', function (assert) {
     assert.equal(actual, expected, "typeOf(function*(){}).in(function*(){}) should return true");
     assert.end()
 });
+
+test('JSON/Math', function(assert){
+    var expected = true;
+    var actual = typeOf(JSON).in('JSON');
+    assert.equal(actual, expected, "typeOf(JSON).in('JSON') should return true");
+    actual = typeOf(JSON).in(JSON);
+    assert.equal(actual, expected, "typeOf(JSON).in(JSON) should return true");
+
+    actual = typeOf(Math).in('Math');
+    assert.equal(actual, expected, " typeOf(Math).in('Math') should return true");
+
+    actual = typeOf(Math).in(Math);
+    assert.equal(actual, expected, " typeOf(Math).in(Math) should return true");
+    assert.end()
+
+})
 
 test('class', function (assert) {
     class Model {

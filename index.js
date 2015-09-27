@@ -12,13 +12,13 @@ function TypeOfBuilder(value) {
      * @type {boolean}
      * @private
      */
-    const _isObj = typeof value === "object";
+    const IS_OBJECT = typeof value === "object";
     /**
      * store type of value
      * @private
      * @type {String}
      */
-    const type = typeOf(value);
+    const VALUE_TYPE = typeOf(value);
 
 
     /**
@@ -28,32 +28,33 @@ function TypeOfBuilder(value) {
      * @private
      */
     function _in(arg) {
-        let _type = typeOf(arg);
-        switch (_type) {
+        let arg_type = typeOf(arg);
+        switch (arg_type) {
             case 'String':
-                if (arg) {
-                    return (arg === 'Object' && type !== 'Array') ? _isObj : type === arg
+                if (arg === '') {
+                    return VALUE_TYPE === 'String';
                 }
-                return type === 'String';
+                else {
+                    return VALUE_TYPE === arg;
+                }
             case 'Function':
-                return (_isObj) ? value instanceof arg : _in(getConstructorName(arg.prototype));
+                return (IS_OBJECT === true) ? value instanceof arg : _in(getConstructorName(arg.prototype));
             case 'RegExp':
-                return arg.test(type);
+                return arg.test(VALUE_TYPE);
             case 'Array':
-                if (arg.length) {
-                    for (let v of arg) {
-                        if (_in(v)) return true
-                    }
-                } else {
+                if (arg.length === 0) {
                     return _in('Array');
                 }
+                for (let v of arg) {
+                    if (_in(v) === true) return true;
+                }
                 return false;
-            case type:
-                if (_isObj && arg !== null) {
+            case VALUE_TYPE:
+                if (IS_OBJECT === true && arg !== null) {
                     return Object.getPrototypeOf(value) === Object.getPrototypeOf(arg);
                 }
             default:
-                return _in(_type);
+                return _in(arg_type);
         }
     }
 
@@ -76,7 +77,7 @@ function TypeOfBuilder(value) {
          * @returns {String}
          */
         this.getType = function () {
-            return type;
+            return VALUE_TYPE;
         };
     }
 
