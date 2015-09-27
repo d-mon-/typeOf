@@ -11,8 +11,8 @@ const getConstructorName = require('./getConstructorName');
  * @returns {String}
  */
 module.exports = function typeOf(value) {
-    if ((typeof value === "number" || value instanceof Number) && isNaN(value)) return "NaN";
     if (value === null) return 'Null';
     if (value === undefined) return 'Undefined';
+    if ((typeof value === "number" || value instanceof Number) && isNaN(value)) return "NaN";
     return getConstructorName(value);
 };

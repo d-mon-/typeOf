@@ -5,8 +5,9 @@ allow you to compare the type (or instance) of your value with several types (or
 #### It supports:
 - Regex
 - Multi choices
-- both: new String('test') and 'test' return the same type (String) 
-- it handles NaN, Undefined, Null types
+- both: new String('test') and 'test' return the same type
+- same thing with numbers and booleans
+- NaN, Undefined, Null values have their own types
 - use instanceof when necessary: typeOf(instance).in(constructor)
 - and more!
 
@@ -63,7 +64,9 @@ typeOf('lolipop').in('Number', 'String', 'Object', 'Array');
 ```
 
 ###### regex:
-Furthermore, typeof-in also supports Regex against your value, which is quite useful with < ****Error> types for example. [about Error types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+Furthermore, typeof-in also supports Regex against your value, 
+
+which is quite useful with < ****Error> types for example. [about Error types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 ```js
 typeOf(new TypeError()).in(/.+Error$/); //is an error other than 'Error' type
 ```
@@ -77,11 +80,12 @@ typeOf(()=>{}).in('Function')
 ```
 
 ###### calling several times:
-This is the main advantage of using typeof-in through an object, it allows you to hit the same value in different ways
+This is the main advantage of using typeof-in through an object, it allows you to deal with the same value in different ways
 ```js
+var myType = typeOf('test');
 //call the "in" method several times
 if(myType.in('String')){
-    //do something with value as a string
+    //do something with the value as a string
 }else if(myType.in(['Null','Undefined'])){
     //you need to init your value!
 }else if(myType.in(/.+Error$/)){
@@ -161,7 +165,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
 
 The recent version of typeof-in (>= 3.0.0) allows you to directly call the function in charge of the comparison, and by extension, not create an object every time you use typeOf() in your code. 
 
-This feature works exactly like the previous examples. however, you cannot retrieve the type.
+This feature works exactly like the previous examples. however, you cannot retrieve the type with **getType()**.
 
 ```js
 typeOf('lolipop','String'); 
@@ -202,12 +206,10 @@ switch(typeOf('test')){
 > npm run type-test
 
 #### *words of advice*
+_index.js_ : *ES6*  => use babel or --harmony (node.js < v4.0.0) if necessary
 
-_index.js_ : *ES6*  (for..of , const and let) => use babel if necessary
-
-you might need to polyfill Object.getPrototypeOf() for cross-browser compatibility
+you might need to polyfill Object.getPrototypeOf() for cross-browser compatibility too (cf: IE < 9).
 
 _typeOf.js_ : *ES5*
- 
     
 Finally, I'm open to any suggestions

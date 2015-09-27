@@ -28,35 +28,30 @@ log(undefined, 'Undefined');
 
 //#NaN
 log(NaN, 'NaN');
+log(new Number(NaN), 'NaN');
 
 //#String
 log(new String('test'), 'String');
-log(String, 'Function');
 log('test', 'String');
 
 //#Number
 log(new Number(42), 'Number');
 log(42, 'Number');
-log(Number, 'Function');
 
 //#Boolean
 log(new Boolean(false), 'Boolean');
 log(false, 'Boolean');
-log(Boolean, 'Function');
 
 //#Array
 log([], 'Array');
-log(Array, 'Function')
-log(new Array(), 'Array')
+log(new Array(), 'Array');
 
 //#Object
 log({}, 'Object');
-log(Object, 'Function');
 log(new Object(), 'Object');
 
 //#Symbol
 try {
-    log(Symbol, 'Function');
     log(Symbol("Foo"), 'Symbol');
 } catch (err) {
     console.log(err.message, '-> SKIP')
@@ -66,10 +61,8 @@ try {
 //#regexp
 log(/test/, 'RegExp')
 log(new RegExp(), 'RegExp');
-log(RegExp, 'Function')
 
 //#function
-log(Function, 'Function');
 log(new Function(), 'Function');
 log(function () {
 }, 'Function');
@@ -83,14 +76,12 @@ try {
 try {
     log(function*() {
     }, 'GeneratorFunction');
-    log(GeneratorFunction, 'Function');
     log(new GeneratorFunction(), 'GeneratorFunction')
 } catch (err) {
     console.log(err.message, '-> SKIP')
 }
 //#Promise
 try {
-    log(Promise, 'Function');
     log(new Promise(function () {
     }), 'Promise');
 } catch (err) {
@@ -108,7 +99,6 @@ try {
 
 //#Error
 log(new Error(), 'Error');
-log(Error, 'Function');
 log(new TypeError(), 'TypeError');
 
 //#map/set
@@ -123,7 +113,6 @@ try {
 log(new Date(), 'Date');
 try {
     log(new Iterator('a'), 'Iterator');
-    log(Iterator, 'Function');
 } catch (err) {
     console.log(err.message, '-> SKIP');
 }
