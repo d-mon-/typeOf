@@ -208,7 +208,7 @@ typeOf('lolipop',[Number, [], 'String']);
 ```
 
 #### TypeOf only
-In the case you only need the function used to retrieve the type (as a String) of a specific value, you might be interested in the [typeof-- library](https://www.npmjs.com/package/typeof--)
+In the case you only need the function used to retrieve the type (as a String) of a specific value, you might be interested with the [typeof-- library](https://www.npmjs.com/package/typeof--)
 
 ## NPM commands
 > npm install typeof-in -S
