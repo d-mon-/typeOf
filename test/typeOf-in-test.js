@@ -4,9 +4,7 @@
  */
 'use strict';
 var test = require('tape');
-
 var typeOf = require('../');
-var type = require('../typeOf');
 
 //################################test factory single arg################################
 test('typeOf().getType()', function (assert) {

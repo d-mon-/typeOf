@@ -3,8 +3,8 @@
  * Twitter: @MisterRaton
  */
 "use strict";
-const typeOf = require('./typeof');
-const getConstructorName = require('./getConstructorName');
+const typeOf = require('typeof--');
+const getConstructorName = require('typeof--/getConstructorName');
 
 function TypeOfBuilder(value) {
     /**
@@ -80,7 +80,6 @@ function TypeOfBuilder(value) {
             return VALUE_TYPE;
         };
     }
-
 }
 
 module.exports = function factory(value) {

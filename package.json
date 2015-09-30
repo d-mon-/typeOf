@@ -1,15 +1,14 @@
 {
   "name": "typeof-in",
-  "version": "3.0.8",
+  "version": "3.1.0",
   "description": "compare the type of your value with one or several types",
   "main": "index.js",
   "directories": {
     "test": "test"
   },
   "scripts": {
-    "test": "node ./test/typeOf-test.js && node ./test/typeOf-in-test.js | tap-nyan",
-    "typein-test": "node ./test/typeOf-in-test.js",
-    "type-test": "node ./test/typeOf-test.js"
+    "test": "node ./test/typeOf-in-test.js | tap-nyan",
+    "typein-test": "node ./test/typeOf-in-test.js"
   },
   "repository": {
     "type": "git",
@@ -34,5 +33,8 @@
   "devDependencies": {
     "tap-nyan": "0.0.2",
     "tape": "^4.2.0"
+  },
+  "dependencies": {
+    "typeof--": "^1.0.0"
   }
 }

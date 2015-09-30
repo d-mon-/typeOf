@@ -3,14 +3,28 @@ allow you to compare the type (or instance) of your value with several types (or
 
 ## Why use typeof-in ? 
 #### JS is, somehow, broken
-typeof null === 'object', but null instanceof Object return false
 
-typeof /regularexpression/ === 'object', we would expect 'regexp'
+> **typeof** null **===** 'object'
+>
+> null **instanceof** Object === **false**
 
-new Number(42) and 42 have the same constructor name, but are completely different. (String and Boolean have the same "problem")
+null shouldn't be an object, and even if it is in JS, it is not an instance of Object.
 
-typeof NaN === 'number', Why ?!
-typeof (new Number(NaN)) === 'object', which doesn't help more...
+> **typeof** /regularexpression/ **===** 'object'
+
+every type I see this line, I would expect *'regexp'*
+
+**new** Number(42) and 42 have the same constructor name, but are completely different. (String and Boolean have the same "problem")
+
+> **typeof** NaN **===** 'number'
+
+Quite famous, but still incoherent.
+
+> **typeof** new Number(NaN) **===** 'object'
+
+and this one doesn't help more the case of NaN...
+
+and some more...
 
 #### typeof-in supports:
 - Regex
@@ -108,17 +122,17 @@ if(myType.in('String')){
 ###### some other tricks:
 *it might impact performance*
 
-If the value passed inside typeOf is not an Object, its **in()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value.
+If the value passed inside typeOf is not an Object, its **in()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value. (**important:** some constructors are not supported by all browsers)
 
 Therefore, you can use typeOf-in like this:
 ```js
 //with contructors
-typeOf('lolipop').in([Number,String,Promise,Boolean,GeneratorFunction,Iterator,Function,Array,Error,Object,Symbol])
+typeOf(1).in([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
 
 //with random values, however: strings and arrays must absolutely be empty! ('' & [])
 typeOf(1).in([null,undefined,NaN,[], {}, 42,'',function*(){}, function hi(){console.log('hellow world')}]); 
 //is equal to
-typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number','GeneratorFunction','Function'])
+typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'])
 ```
 
 ###### dealing with instanceof:
@@ -188,44 +202,15 @@ typeOf('lolipop',[Number, [], 'String']);
 ```
 
 #### TypeOf only
-In the case you only need the function used to retrieve the type (as a String) of a specific value, you can directly require the file typeOf.js as shown below.
-```js
-const typeOf = require('typeof-in/typeOf'); //typeOf.js
-typeOf(true) === 'Boolean'
-typeOf(person1) === 'Personnage'
-typeOf(function*(){}) === 'GeneratorFunction'
-
-switch(typeOf('test')){
-    case 'String':
-    case 'Number':
-    default:
-}
-//and so on...
-```
-
-
+In the case you only need the function used to retrieve the type (as a String) of a specific value, you might be interested in the [typeof-- library](https://www.npmjs.com/package/typeof--)
 
 ## NPM commands
-
-#### install
-> npm install typeof-in --save
-
-#### main test
+> npm install typeof-in -S
 > npm test
 
-#### test of index.js
-> npm run typein-test
+#### words of advice
+this library use some *ES6* features => use babel or --harmony (with node.js < v4.0.0) if necessary
 
-#### test of typeOf.js
-> npm run type-test
-
-#### *words of advice*
-for more examples, see test folder.
-
-_index.js_ : *ES6*  => use babel or --harmony (node.js < v4.0.0) if necessary
-
-you might need to polyfill Object.getPrototypeOf() for cross-browser compatibility too (cf: IE < 9).
-
-_typeOf.js_ : *ES5*
+you might need to polyfill Object.getfPrototypeOf() for cross-browser compatibility too (cf: IE < 9).
     
 Finally, I'm open to any suggestions
