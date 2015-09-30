@@ -206,6 +206,7 @@ In the case you only need the function used to retrieve the type (as a String) o
 
 ## NPM commands
 > npm install typeof-in -S
+>
 > npm test
 
 #### words of advice
