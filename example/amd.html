@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>test amd implementation</title>
+    <script src="../node_modules/requirejs/require.js"></script>
+    <script>
+        require.config({
+            baseUrl: "/",
+            paths: {
+                'typeof--':'./node_modules/typeof--/index',
+                'typeOf':'./index'
+            }
+        });
+        requirejs(['typeOf'], function(typeOf) {
+            console.log(typeOf(42).in(Number));
+            console.log(typeOf(42).in('String'));
+            console.log(typeOf(new Number(42)).in(new Number(23)));
+        });
+    </script>
+</head>
+<body>
+
+</body>
+</html>

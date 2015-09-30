@@ -1,6 +1,6 @@
 {
   "name": "typeof-in",
-  "version": "3.1.0",
+  "version": "3.1.2",
   "description": "compare the type of your value with one or several types",
   "main": "index.js",
   "directories": {
@@ -35,6 +35,6 @@
     "tape": "^4.2.0"
   },
   "dependencies": {
-    "typeof--": "^1.0.0"
+    "typeof--": ">=1.0.0"
   }
 }

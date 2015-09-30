@@ -363,5 +363,16 @@ test('typeof-function-oriented' , function (assert) {
     actual = typeOf('myStringIsCute',[Number, [], Object, String]);
     assert.equal(actual, expected, " typeOf('myStringIsCute',[Number, [], Object, String]) should return true")
 
+    actual = typeOf().in('myStringIsCute',Number, [], 'String');
+    assert.equal(actual, expected, "typeOf.in('myStringIsCute',Number, [], 'String') should return true")
+
+    actual = typeOf().in('myStringIsCute',[Number, [], 'String']);
+    assert.equal(actual, expected, "typeOf.in('myStringIsCute',[Number, [], Object, String]) should return true")
+
+    actual = typeOf().getType('lolipop');
+    expected = 'String';
+    assert.equal(actual, expected, "typeOf.getType('lolipop') should return 'String'");
+
+
     assert.end();
 });
