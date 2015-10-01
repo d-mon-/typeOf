@@ -111,7 +111,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     typeOf(person).in(__person); //true    
     typeOf(person).in(person2); //false
     
-    //#instance against prototype
+    //#instance against constructor
     typeOf(person).in(Person); //true   
     typeOf(person).in(Human); //true
     typeOf(person2).in(Human); //false
@@ -142,7 +142,7 @@ The recent version of typeof-in (>= 3.0.0) allows you to directly call the funct
 This feature works exactly like the previous examples.
 
 ```js
-//with one argument (default behavior)
+//for comparison: with one argument (default behavior)
 typeOfIn('lolipop').in([Number, [], 'String']); 
 
 //with more than one argument:
@@ -186,6 +186,34 @@ console.log(typeof new Number(NaN)) //'object'
 And one of the most famous example in JS is NaN (a.K.a Not A Number) which return a type of number...
 
 and some more...
+
+## Important
+
+[typeof--](https://www.npmjs.com/package/typeof--) uses **constructor(.name)** when possible, and is therefore influenced by the change of the constructor function!
+
+Which imply that: an object "A" deriving from another object "B" will have the constructor of "B" and not "A", you can avoid this problem by using Object.assign, _.assign or _.extend...
+
+Moreover, any change on the constructor will modify the type returned (cf: [See the table of typeof--](https://github.com/d-mon-/typeof--#tables-of-common-values) ).
+
+```js
+function Example(){}
+var test = new Example()
+test.constructor = function hacked();
+console.log(typeOf(test).getType()) //'Object'
+console.log(typeOf(test).in('Example')) //false
+```
+
+To avoid such problem, you must trigger **instanceof** by passing constructors.
+```js
+var typeOf = require('typeof-in')
+var test1 = 'test'
+test1.constructor = function hacked(){}; //doesn't work, you can't change the constructor of a primitive value
+typeOf('test').in(String) //return true: compare 'test' with 'String'
+
+test2 = new String('test');
+test.constructor = function hacked(){} //typeOf(test).getType() will return 'hacked'
+typeOf(test).in(String) //true
+```
 
 ## typeof-in supports:
 
