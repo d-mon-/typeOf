@@ -1,6 +1,7 @@
 # Typeof-in ( + instanceof )
 allow you to compare the type (or instance) of your value with several types (or constructor), and finally return a **Boolean**.
 
+**Consider using [lodash](https://lodash.com) or [kind-of](https://www.npmjs.com/package/kind-of) first!**
 # Use cases:
 ```js
     var typeOf = require('typeof-in'); 
