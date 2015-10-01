@@ -134,14 +134,14 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
 
 
 ## Through a function
-*improve performance (unique call), decrease readability*
+*decrease readability*
 
 The recent version of typeof-in (>= 3.0.0) allows you to directly call the function in charge of the comparison, and by extension, not create an object every time you use typeOf() in your code. 
 
 This feature works exactly like the previous examples.
 
 ```js
-//with one argument
+//with one argument (default behavior)
 typeOfIn('lolipop').in([Number, [], 'String']); 
 
 //with more than one argument:
@@ -149,7 +149,7 @@ var typeOfIn = typeOf;
 typeOfIn('lolipop',Number, [], 'String'); 
 typeOfIn('lolipop',[Number, [], 'String']); 
 
-//with zerp argument : typeof-in expose getType() and in().
+//with zero argument : typeof-in expose getType() and in().
 var typeOf = require('typeof-in')();
 typeOf.getType('lolipop') //'String'
 typoOf.in('lolipop',Number, [], 'String');
@@ -229,15 +229,15 @@ make sure to change the paths and module names according to your projects.
 require.config({
     baseUrl: "/",
     paths: {
-        'typeof--':'./node_modules/typeof--/index',
-        'typeOf-in':'./index' //typeof-in path
+        'typeof--':'./node_modules/typeof--/index', //typeof-in need typeof-- lib path.
+        'typeOf-in':'./node_modules/typeof-in/index' 
     }
 });
 requirejs(['typeOf-in'], function(typeOf) {
     //do something with typeOf
 });
 ```
-[see the following example](https://github.com/d-mon-/typeOf/example)
+[see the following example](https://github.com/d-mon-/typeOf/tree/master/example)
 
 # TypeOf only
 In the case you only need the function used to retrieve the type of a value as a *String* (like typeof), you might be interested in the following library:
