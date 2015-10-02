@@ -218,7 +218,7 @@ typeOf(test).in('Object')  //true
 typeOf(test).in(Example)   //true
 typeOf(test).in(Object)    //true
 
-test.constructor = function hacked(){} //typeOf(test).getType() will return 'Object'
+Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){} //typeOf(test).getType() will return 'Object'
 
 //after constructor corruption
 typeOf(test).in('Example') //false
