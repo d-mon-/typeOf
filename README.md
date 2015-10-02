@@ -71,10 +71,9 @@ If the value passed inside typeOf is not an Object, its **in()** method will nev
 Therefore, you can use typeOf-in like this:
 ```js
 //with contructors
+var GeneratorFunction = (function*(){}).constructor;
 typeOf(1).in([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
 
-//with random values, however: strings and arrays must absolutely be empty! ('' & [])
-typeOf(1).in([null,undefined,NaN,[], {}, 42,'',function*(){}, function hi(){console.log('hellow world')}]); 
 //is equal to
 typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'])
 ```

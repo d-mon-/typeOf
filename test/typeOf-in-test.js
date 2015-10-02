@@ -190,11 +190,11 @@ test('function', function (assert) {
     actual = typeOf(String).in('Function');
     assert.equal(actual, expected, " typeOf(String).in('Function'); should return true");
 
-    actual = typeOf(String).in(function(){});
-    assert.equal(actual, expected, "typeOf(String).in(Function) should return true");
-
     actual = typeOf(String).in(Function);
     assert.equal(actual, expected, "typeOf(String).in(Function) should return true");
+
+    actual = typeOf(()=>{}).in('Function');
+    assert.equal(actual, expected, "typeOf(()=>{}).in('Function') should return true");
 
     actual = typeOf(()=>{}).in(Function);
     assert.equal(actual, expected, "typeOf(()=>{}).in('Function') should return true");
@@ -308,9 +308,6 @@ test('Anonymous',function(assert) {
 
     var actual = typeOf(new (myAnonymous)).in('myAnonymous');
     assert.equal(actual, !expected, "typeOf(new (function(){})).in('myAnonymous') should return false");
-
-    var actual = typeOf(new (myAnonymous)).in(function(){});
-    assert.equal(actual, !expected, "typeOf(new (myAnonymous)).in(function(){}) should return false");
 
     var actual = typeOf(new (myAnonymous)).in(new (function(){}));
     assert.equal(actual, !expected, "typeOf(new (myAnonymous)).in(new (function(){})) should return false");

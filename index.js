@@ -31,6 +31,14 @@
              */
             var VALUE_TYPE = typeOf(value);
 
+            function getFunctionName(_function){
+                if(_function.name !== undefined){
+                    return _function.name
+                }else{
+                    var __function = _function.toString(), index = __function.indexOf('(',9);
+                    return __function.slice(9,index);
+                }
+            }
 
             /**
              * check if type is equal/in value
@@ -53,7 +61,10 @@
                         }
                         return VALUE_TYPE === arg;
                     case 'Function':
-                        return (IS_OBJECT === true) ? value instanceof arg : _in(typeOf(arg.prototype));
+                        if(IS_OBJECT===true){
+                            return value instanceof arg;
+                        }
+                        return _in(getFunctionName(arg))||_in('Function')
                     case 'RegExp':
                         return arg.test(VALUE_TYPE);
                     case 'Array':
