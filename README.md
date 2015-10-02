@@ -206,27 +206,22 @@ Which imply that: an object "A" deriving from another object "B" will have the c
 
 Moreover, any change on the constructor will modify the type returned (cf: [See the table of typeof--](https://github.com/d-mon-/typeof--#tables-of-common-values) ).
 
-```js
-function Example(){}
-var test = new Example()
-test.constructor = function hacked();
-console.log(typeOf(test).getType()) //'Object'
-console.log(typeOf(test).in('Example')) //false
-```
-
 To avoid such problem, you must trigger **instanceof** by passing constructors.
 ```js
 var typeOf = require('typeof-in');
 
 function Example(){};
 
-var test = new Example('test');
+var test = new Example('test'); 
+//before constructor corruption
 typeOf(test).in('Example') //true
 typeOf(test).in('Object')  //true
 typeOf(test).in(Example)   //true
 typeOf(test).in(Object)    //true
 
 test.constructor = function hacked(){} //typeOf(test).getType() will return 'Object'
+
+//after constructor corruption
 typeOf(test).in('Example') //false
 typeOf(test).in('Object')  //true
 typeOf(test).in(Example)   //true
