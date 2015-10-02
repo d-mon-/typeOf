@@ -90,8 +90,17 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
 
     typeOf(new String('test')).in(String)
     typeOf({}).in(Object)
-    typeOf([]).in(Object)   //return true! an Array is an instance of Object. however
-    typeOf([]).in('Object') //return false
+    typeOf([]).in(Object)   //return true
+    typeOf([]).in(Array)    //return true
+    typeOf([]).in('Object') //return true, an Array is an Object
+    typeOf([]).in('Array')  //return true
+    //typeOf(/myRegex/) has the same behavior than Array.
+    
+    typeOf(new TypeError()).in(Error)      //true
+    typeOf(new TypeError()).in(TypeError)  //true
+    typeOf(new TypeError()).in('TypeError')//true, a TypeError is an Error
+    typeOf(new TypeError()).in('Error')    //true
+    
     
     //OR
 
@@ -117,6 +126,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     typeOf(person2).in(Human); //false
     typeOf(person2).in('Human'); //true
     typeOf(person2).in(Object); //true
+    typeOf(person2).in('Object'); //true
     
     typeOf(person).getType(); // return 'Human'
     typeOf(person2).getType(); //return 'Human'
@@ -129,6 +139,7 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     typeOf(new (myAnonymous)).in('#Anonymous') //true
     typeOf(new (myAnonymous)).in(myAnonymous) //true
     typeOf(new (myAnonymous)).in(Object) //true
+    typeOf(new (myAnonymous)).in('Object') //true
     typeOf(new (myAnonymous)).in(new(function(){})) //false
     
 ```
@@ -205,14 +216,21 @@ console.log(typeOf(test).in('Example')) //false
 
 To avoid such problem, you must trigger **instanceof** by passing constructors.
 ```js
-var typeOf = require('typeof-in')
-var test1 = 'test'
-test1.constructor = function hacked(){}; //doesn't work, you can't change the constructor of a primitive value
-typeOf('test').in(String) //return true: compare 'test' with 'String'
+var typeOf = require('typeof-in');
 
-test2 = new String('test');
-test.constructor = function hacked(){} //typeOf(test).getType() will return 'hacked'
-typeOf(test).in(String) //true
+function Example(){};
+
+var test = new Example('test');
+typeOf(test).in('Example') //true
+typeOf(test).in('Object')  //true
+typeOf(test).in(Example)   //true
+typeOf(test).in(Object)    //true
+
+test.constructor = function hacked(){} //typeOf(test).getType() will return 'Object'
+typeOf(test).in('Example') //false
+typeOf(test).in('Object')  //true
+typeOf(test).in(Example)   //true
+typeOf(test).in(Object)    //true
 ```
 
 ## typeof-in supports:

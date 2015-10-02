@@ -38,6 +38,9 @@ test('number', function (assert) {
     var actual = typeOf(42).in('Number');
     assert.equal(actual, expected, "typeOf(42).in('Number') should return true");
 
+    actual = typeOf(new Number(42)).in('Number');
+    assert.equal(actual, expected, "typeOf(new Number(42)).in('Number') should return true");
+
     actual = typeOf(42).in(666);
     assert.equal(actual, expected, "typeOf(42).in(666) should return true");
 
@@ -53,9 +56,6 @@ test('number', function (assert) {
     actual = typeOf(NaN).in(Number);
     assert.equal(actual, !expected, "typeOf(NaN).in(Number) should return false");
 
-    actual = typeOf(new Number(42)).in('Number');
-    assert.equal(actual, expected, "typeOf(new Number(42)).in('Number') should return true");
-
     assert.end();
 });
 
@@ -64,6 +64,9 @@ test('string', function (assert) {
     var expected = true;
     var actual = typeOf('').in('String');
     assert.equal(actual, expected, "typeOf('').in('String') should return true");
+
+    typeOf('').in('');
+    assert.equal(actual, expected, "typeOf('').in('') should return true");
 
     actual = typeOf('myStringIsCute').in(String);
     assert.equal(actual, expected, "typeOf('myStringIsCute').in(String) should return true");
@@ -78,6 +81,9 @@ test('boolean', function (assert) {
     var expected = true;
     var actual = typeOf(new Boolean()).in('Boolean');
     assert.equal(actual, expected, "typeOf(new Boolean()).in('Boolean') should return true");
+
+    actual = typeOf(true).in('Boolean');
+    assert.equal(actual, expected, "typeOf(true).in(false) should return true");
 
     actual = typeOf(true).in(false);
     assert.equal(actual, expected, "typeOf(true).in(false) should return true");
@@ -101,7 +107,7 @@ test('array', function (assert) {
 
     //regression test
     actual = typeOf([42]).in('Object');
-    assert.equal(actual, !expected, "typeOf([42]).in('Object') should return false");
+    assert.equal(actual, expected, "typeOf([42]).in('Object') should return true");
 
     actual = typeOf([42]).in(Object);
     assert.equal(actual, expected, "typeOf([42]).in(Object) should return true");
@@ -113,6 +119,9 @@ test('regex', function (assert) {
     var expected = true;
     var actual = typeOf(/test/).in('RegExp');
     assert.equal(actual, expected, "typeOf(/test/).in('RegExp') should return true");
+
+    actual = typeOf(/test/).in('Object');
+    assert.equal(actual, expected, "typeOf(/test/).in('Object') should return true");
 
     actual = typeOf(/test/).in(RegExp);
     assert.equal(actual, expected, "typeOf(/test/).in(RegExp) should return true");
@@ -164,10 +173,10 @@ test('object', function (assert) {
     assert.equal(actual, expected, "typeOf(person2).in('Personnage') should return true");
 
     actual = typeOf(person2).in('Object');
-    assert.equal(actual, !expected, "typeOf(person2).in('Object') should return false");
+    assert.equal(actual, expected, "typeOf(person2).in('Object') should return true");
 
     actual = typeOf(person2).in(Object);
-    assert.equal(actual, expected, "typeOf(person2).in('Object') should return true");
+    assert.equal(actual, expected, "typeOf(person2).in(Object) should return true");
 
     assert.end();
 });
@@ -175,18 +184,17 @@ test('object', function (assert) {
 
 test('function', function (assert) {
     var expected = true;
-    var actual = typeOf(function () {
-    }).in('Function');
+    var actual = typeOf(function () {}).in('Function');
     assert.equal(actual, expected, "typeOf(function(){}).in('Function') should return true");
 
     actual = typeOf(String).in('Function');
     assert.equal(actual, expected, " typeOf(String).in('Function'); should return true");
 
-    actual = typeOf(String).in(Function);
-    assert.equal(actual, expected, "typeOf(String).in(function(){}) should return true");
+    actual = typeOf(String).in(function(){});
+    assert.equal(actual, expected, "typeOf(String).in(Function) should return true");
 
-    actual = typeOf(new Function()).in(Function);
-    assert.equal(actual, expected, "typeOf(new Function()).in('Function') should return true");
+    actual = typeOf(String).in(Function);
+    assert.equal(actual, expected, "typeOf(String).in(Function) should return true");
 
     actual = typeOf(()=>{}).in(Function);
     assert.equal(actual, expected, "typeOf(()=>{}).in('Function') should return true");
@@ -194,10 +202,26 @@ test('function', function (assert) {
     assert.end();
 });
 
+test('error', function (assert) {
+    var expected = true;
+    var actual = typeOf(new TypeError()).in('TypeError');
+    assert.equal(actual, expected, "typeOf(new TypeError()).in('TypeError') should return true");
+
+    actual = typeOf(new TypeError()).in('Error');
+    assert.equal(actual, expected, "typeOf(new TypeError()).in('Error'); should return true");
+
+    actual = typeOf(new Error()).in('Error');
+    assert.equal(actual, expected, " typeOf(new Error()).in('Error'); should return true");
+
+    actual = typeOf(new TypeError()).in(Error);
+    assert.equal(actual, expected, "typeOf(new TypeError()).in(Error); should return true");
+
+    assert.end();
+});
+
 test('generator', function (assert) {
     var expected = true;
-    var actual = typeOf(function*() {
-    }).in('GeneratorFunction');
+    var actual = typeOf(function*() {}).in('GeneratorFunction');
     assert.equal(actual, expected, "typeOf(function*(){}).in('GeneratorFunction') should return true");
 
     actual = typeOf(function*() {}).in(function*() {});
@@ -209,7 +233,11 @@ test('JSON/Math', function(assert){
     var expected = true;
     var actual = typeOf(JSON).in('JSON');
     assert.equal(actual, expected, "typeOf(JSON).in('JSON') should return true");
+
     actual = typeOf(JSON).in(JSON);
+    assert.equal(actual, expected, "typeOf(JSON).in(JSON) should return true");
+
+    actual = typeOf(JSON).in('Object');
     assert.equal(actual, expected, "typeOf(JSON).in(JSON) should return true");
 
     actual = typeOf(Math).in('Math');
@@ -267,14 +295,6 @@ test('class', function (assert) {
     assert.end()
 });
 
-test('regexp testing', function (assert) {
-    var person = new (function Personnage() {
-    });
-    var expected = true;
-    var actual = typeOf(person).in(/^Person.*/);
-    assert.equal(actual, expected, "typeOf(Person).in(/^Person.*/); should return true");
-    assert.end();
-});
 
 test('Anonymous',function(assert) {
     var myAnonymous = function(){};
@@ -282,6 +302,9 @@ test('Anonymous',function(assert) {
     var expected = true;
     var actual = typeOf(new (myAnonymous)).in('#Anonymous');
     assert.equal(actual, expected, "typeOf(new (function(){})).in('#Anonymous') should return true");
+
+    actual = typeOf(new (myAnonymous)).in('Object');
+    assert.equal(actual, expected, "typeOf(new (function(){})).in('true') should return true");
 
     var actual = typeOf(new (myAnonymous)).in('myAnonymous');
     assert.equal(actual, !expected, "typeOf(new (function(){})).in('myAnonymous') should return false");
@@ -303,7 +326,16 @@ test('Anonymous',function(assert) {
 
     assert.end()
 });
+//################################Test regex#############################################
 
+test('regexp testing', function (assert) {
+    var person = new (function Personnage() {
+    });
+    var expected = true;
+    var actual = typeOf(person).in(/^Person.*/);
+    assert.equal(actual, expected, "typeOf(Person).in(/^Person.*/); should return true");
+    assert.end();
+});
 //################################Test factory multi args################################
 
 test('array of string', function (assert) {

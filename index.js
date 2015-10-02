@@ -45,9 +45,13 @@
                         if (arg === '') {
                             return VALUE_TYPE === 'String';
                         }
-                        else {
-                            return VALUE_TYPE === arg;
+                        if(arg === 'Object'){
+                            return value instanceof Object;
                         }
+                        if(arg ==='Error'){
+                            return value instanceof Error;
+                        }
+                        return VALUE_TYPE === arg;
                     case 'Function':
                         return (IS_OBJECT === true) ? value instanceof arg : _in(typeOf(arg.prototype));
                     case 'RegExp':
