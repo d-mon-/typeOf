@@ -17,6 +17,9 @@
         }
     }(function (typeOf) {
         "use strict";
+        var functionToString = Function.prototype.toString;
+        var arraySlice = Array.prototype.slice;
+
         function TypeOfBuilder(value) {
             /**
              * is an Object ?
@@ -31,12 +34,12 @@
              */
             var VALUE_TYPE = typeOf(value);
 
-            function getFunctionName(_function){
-                if(_function.name !== undefined){
-                    return _function.name
-                }else{
-                    var __function = _function.toString(), index = __function.indexOf('(',9);
-                    return __function.slice(9,index);
+            function getFunctionName(_function) {
+                if (_function.name !== undefined) {
+                    return _function.name || 'Function';
+                } else {
+                    var __function = functionToString.call(_function), index = __function.indexOf('(', 9);
+                    return (index === 9) ? 'Function' : __function.slice(9, index);
                 }
             }
 
@@ -53,28 +56,22 @@
                         if (arg === '') {
                             return VALUE_TYPE === 'String';
                         }
-                        if(arg === 'Object'){
+                        if (arg === 'Object') {
                             return value instanceof Object;
                         }
-                        if(arg ==='Error'){
+                        if (arg === 'Error') {
                             return value instanceof Error;
                         }
                         return VALUE_TYPE === arg;
                     case 'Function':
-                        if(IS_OBJECT===true){
-                            return value instanceof arg;
-                        }
-                        return _in(getFunctionName(arg))||_in('Function')
+                        return (IS_OBJECT === true) ? value instanceof arg : _in(getFunctionName(arg));
                     case 'RegExp':
                         return arg.test(VALUE_TYPE);
                     case 'Array':
-                        if (arg.length === 0) {
-                            return _in('Array');
-                        }
                         for (var i = 0, l = arg.length; i < l; i++) {
                             if (_in(arg[i]) === true) return true;
                         }
-                        return false;
+                        return (arg.length === 0) ? _in('Array') : false;
                     case VALUE_TYPE:
                         if (IS_OBJECT === true && typeof arg === 'object' && arg !== null) {
                             //instance against instance
@@ -101,7 +98,7 @@
                  * @returns {Boolean}
                  */
                 this.in = function () {
-                    return (arguments.length === 1) ? _in(arguments[0]) : _in(Array.prototype.slice.call(arguments));
+                    return (arguments.length === 1) ? _in(arguments[0]) : _in(arraySlice.call(arguments));
                 };
                 /**
                  * return type
@@ -115,7 +112,7 @@
 
         return function factory() {
             function __in(args) {
-                return (args.length === 2) ? TypeOfBuilder(args[0], args[1]) : TypeOfBuilder(args[0], Array.prototype.slice.call(args, 1));
+                return (args.length === 2) ? TypeOfBuilder(args[0], args[1]) : TypeOfBuilder(args[0], arraySlice.call(args, 1));
             }
 
             if (arguments.length === 1) {

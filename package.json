@@ -1,6 +1,6 @@
 {
   "name": "typeof-in",
-  "version": "3.1.7",
+  "version": "3.1.8",
   "description": "compare the type of your value with one or several types",
   "main": "index.js",
   "directories": {
