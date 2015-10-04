@@ -1,6 +1,8 @@
 # Typeof-in ( + instanceof )
 allow you to compare the type (or instance) of your value with several types (or constructor), and finally return a **Boolean**.
 
+compatible with **IE6+**
+
 **Consider using [lodash](https://lodash.com) or [kind-of](https://www.npmjs.com/package/kind-of) first!**
 # Use cases:
 ```js
@@ -213,18 +215,18 @@ function Example(){};
 
 var test = new Example('test'); 
 //before constructor corruption
-typeOf(test).in('Example') //true
-typeOf(test).in('Object')  //true
-typeOf(test).in(Example)   //true
-typeOf(test).in(Object)    //true
+typeOf(test).In('Example') //true
+typeOf(test).In('Object')  //true
+typeOf(test).In(Example)   //true
+typeOf(test).In(Object)    //true
 
 Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){} //typeOf(test).getType() will return 'Object'
 
 //after constructor corruption
-typeOf(test).in('Example') //false
-typeOf(test).in('Object')  //true
-typeOf(test).in(Example)   //true
-typeOf(test).in(Object)    //true
+typeOf(test).In('Example') //false
+typeOf(test).In('Object')  //true
+typeOf(test).In(Example)   //true
+typeOf(test).In(Object)    //true
 ```
 
 ## typeof-in supports:
@@ -268,15 +270,18 @@ In some ways, it is the fusion of **typeof** and **instanceof**
 make sure to change the paths and module names according to your projects.
 */
 require.config({
-    baseUrl: "/",
-    paths: {
-        'typeof--':'./node_modules/typeof--/index', //typeof-in need typeof-- lib path.
-        'typeOf-in':'./node_modules/typeof-in/index' 
-    }
-});
-requirejs(['typeOf-in'], function(typeOf) {
-    //do something with typeOf
-});
+            baseUrl: "/",
+            paths: {
+                'typeof--':'./typeof--', //typeof-- directory path
+                'typeOf':'./index' //typeOf index file path
+            }
+        });
+
+        requirejs(['typeOf'], function(typeOf) {
+                console.log(typeof typeOf);
+                console.log(typeOf(42).getType());
+                console.log(typeOf(42).In('Number'));
+        });
 ```
 [see the following example](https://github.com/d-mon-/typeOf/tree/master/example)
 

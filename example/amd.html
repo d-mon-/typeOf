@@ -8,14 +8,15 @@
         require.config({
             baseUrl: "/",
             paths: {
-                'typeof--':'./node_modules/typeof--/index',
-                'typeOf':'./index'
+                'typeof--':'./node_modules/typeof--', //typeof-- directory path
+                'typeOf':'./index' //typeOf index file path
             }
         });
+
         requirejs(['typeOf'], function(typeOf) {
-            console.log(typeOf(42).in(Number));
-            console.log(typeOf(42).in('String'));
-            console.log(typeOf(new Number(42)).in(new Number(23)));
+                alert(typeof typeOf);
+                alert(typeOf(42).getType());
+                alert(typeOf(42).In('Number'));
         });
     </script>
 </head>

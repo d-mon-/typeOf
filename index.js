@@ -7,15 +7,16 @@
         var path = 'typeof--';
         if (typeof exports !== 'undefined') {
             var typeOf = require(path);
+            var extractFunctionName = require(path+'/extractFunctionName');
             if (typeof module !== 'undefined' && module.exports) {
-                exports = module.exports = factory(typeOf);
+                exports = module.exports = factory(typeOf,extractFunctionName);
             }
-            exports.typeOf = factory(typeOf);
+            exports.typeOf = factory(typeOf,extractFunctionName);
         }
         if (typeof define === 'function' && define.amd) {
-            define([path], factory);
+            define( [path+'/index',path+'/extractFunctionName'], factory);
         }
-    }(function (typeOf) {
+    }(function (typeOf,extractFunctionName) {
         "use strict";
         var functionToString = Function.prototype.toString;
         var arraySlice = Array.prototype.slice;
@@ -33,15 +34,6 @@
              * @type {String}
              */
             var VALUE_TYPE = typeOf(value);
-
-            function getFunctionName(_function) {
-                if (_function.name !== undefined) {
-                    return _function.name || 'Function';
-                } else {
-                    var __function = functionToString.call(_function), index = __function.indexOf('(', 9);
-                    return (index === 9) ? 'Function' : __function.slice(9, index);
-                }
-            }
 
             /**
              * check if type is equal/in value
@@ -64,7 +56,7 @@
                         }
                         return VALUE_TYPE === arg;
                     case 'Function':
-                        return (IS_OBJECT === true) ? value instanceof arg : _in(getFunctionName(arg));
+                        return (IS_OBJECT === true) ? value instanceof arg : _in(extractFunctionName(arg));
                     case 'RegExp':
                         return arg.test(VALUE_TYPE);
                     case 'Array':
@@ -97,7 +89,7 @@
                  * @public
                  * @returns {Boolean}
                  */
-                this.in = function () {
+                this.In = function () {
                     return (arguments.length === 1) ? _in(arguments[0]) : _in(arraySlice.call(arguments));
                 };
                 /**
@@ -123,7 +115,7 @@
                     'getType': function getType(value) {
                         return typeOf(value);
                     },
-                    'in': function () {
+                    'In': function () {
                         return __in(arguments)
                     }
                 };
