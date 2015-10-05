@@ -1,7 +1,7 @@
 # Typeof-in ( + instanceof )
 allow you to compare the type (or instance) of your value with several types (or constructor), and finally return a **Boolean**.
 
-compatible with **IE6+**
+compatible with **IE**
 
 **Consider using [lodash](https://lodash.com) or [kind-of](https://www.npmjs.com/package/kind-of) first!**
 # Use cases:
@@ -15,11 +15,11 @@ You can retrieve the type or compare it with a string representing an expecting 
 typeOf('test').getType(); //return 'String' (see 'typeOf only' below);
 
 //return a Boolean, in these cases: true.
-typeOf('lolipop').in('String');
-typeOf(null).in('Null');
-typeOf(undefined).in('Undefined');
-typeOf(NaN).in('NaN');
-typeOf(new Number(NaN)).in('NaN');
+typeOf('lolipop').In('String');
+typeOf(null).In('Null');
+typeOf(undefined).In('Undefined');
+typeOf(NaN).In('NaN');
+typeOf(new Number(NaN)).In('NaN');
 ```
 
 ### multi:
@@ -28,9 +28,9 @@ You might also want to compare your value with a set of different types.
 
 ```js
 //using an Array (better performance)
-typeOf('lolipop').in(['Number', 'String', 'Object','Array']);
+typeOf('lolipop').In(['Number', 'String', 'Object','Array']);
 //or multiple arguments
-typeOf('lolipop').in('Number', 'String', 'Object', 'Array');
+typeOf('lolipop').In('Number', 'String', 'Object', 'Array');
 ```
 
 ### regex:
@@ -38,15 +38,15 @@ Furthermore, typeof-in also supports Regex against your value,
 
 which is quite useful with < ****Error> types for example. [about Error types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 ```js
-typeOf(new TypeError()).in(/.+Error$/); //is an error other than 'Error' type
+typeOf(new TypeError()).In(/.+Error$/); //is an error other than 'Error' type
 ```
 
 ### ES6 and others objects:
 This library can check all kind of objects. Allowing you to compare *ES6* features like Promises, Generators, fat arrows... which is pretty neat.
 ```js
-typeOf(new Promise(function(){}).in('Promise')
-typeOf(function*(){}).in('GeneratorFunction')
-typeOf(()=>{}).in('Function')
+typeOf(new Promise(function(){}).In('Promise')
+typeOf(function*(){}).In('GeneratorFunction')
+typeOf(()=>{}).In('Function')
 ```
 
 ### calling several times:
@@ -54,13 +54,13 @@ This is the main advantage of using typeof-in through an object, it allows you t
 ```js
 var myType = typeOf('test');
 //call the "in" method several times
-if(myType.in('String')){
+if(myType.In('String')){
     //do something with the value as a string
-}else if(myType.in(['Null','Undefined'])){
+}else if(myType.In(['Null','Undefined'])){
     //you need to init your value!
-}else if(myType.in(/.+Error$/)){
+}else if(myType.In(/.+Error$/)){
     //something bad happened! but not a global error
-}else if(myType.in(Error)){
+}else if(myType.In(Error)){
     //global error handler... :(
 }
 ```
@@ -74,10 +74,10 @@ Therefore, you can use typeOf-in like this:
 ```js
 //with contructors
 var GeneratorFunction = (function*(){}).constructor;
-typeOf(1).in([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
+typeOf(1).In([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
 
 //is equal to
-typeOf(1).in(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'])
+typeOf(1).In(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'])
 ```
 
 ### dealing with instanceof:
@@ -86,21 +86,21 @@ The following examples show different cases when typeof-in will use instanceof t
 However, the library will not return an empty string('') but a "#Anonymous" value in the case of an instance of an anonymous prototype. 
 ```js
     //with primitive value, if the type passed in "in()" is a constructor, then typeof-in will retrieve its constructor name
-    typeOf(42).in(Number)  // is equal to typeOf(42).in('Number')
-    typeOf(new Number(42)).in(Number) //will use instanceof
+    typeOf(42).In(Number)  // is equal to typeOf(42).In('Number')
+    typeOf(new Number(42)).In(Number) //will use instanceof
 
-    typeOf(new String('test')).in(String)
-    typeOf({}).in(Object)
-    typeOf([]).in(Object)   //return true
-    typeOf([]).in(Array)    //return true
-    typeOf([]).in('Object') //return true, an Array is an Object
-    typeOf([]).in('Array')  //return true
+    typeOf(new String('test')).In(String)
+    typeOf({}).In(Object)
+    typeOf([]).In(Object)   //return true
+    typeOf([]).In(Array)    //return true
+    typeOf([]).In('Object') //return true, an Array is an Object
+    typeOf([]).In('Array')  //return true
     //typeOf(/myRegex/) has the same behavior than Array.
     
-    typeOf(new TypeError()).in(Error)      //true
-    typeOf(new TypeError()).in(TypeError)  //true
-    typeOf(new TypeError()).in('TypeError')//true, a TypeError is an Error
-    typeOf(new TypeError()).in('Error')    //true
+    typeOf(new TypeError()).In(Error)      //true
+    typeOf(new TypeError()).In(TypeError)  //true
+    typeOf(new TypeError()).In('TypeError')//true, a TypeError is an Error
+    typeOf(new TypeError()).In('Error')    //true
     
     
     //OR
@@ -117,17 +117,17 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     //#instance against instance
     //if one of them has a constructor, use: x instanceof y.constructor
     //otherwise, compare types as String.
-    typeOf(person).in(_person); //true
-    typeOf(person).in(__person); //true    
-    typeOf(person).in(person2); //false
+    typeOf(person).In(_person); //true
+    typeOf(person).In(__person); //true    
+    typeOf(person).In(person2); //false
     
     //#instance against constructor
-    typeOf(person).in(Person); //true   
-    typeOf(person).in(Human); //true
-    typeOf(person2).in(Human); //false
-    typeOf(person2).in('Human'); //true
-    typeOf(person2).in(Object); //true
-    typeOf(person2).in('Object'); //true
+    typeOf(person).In(Person); //true   
+    typeOf(person).In(Human); //true
+    typeOf(person2).In(Human); //false
+    typeOf(person2).In('Human'); //true
+    typeOf(person2).In(Object); //true
+    typeOf(person2).In('Object'); //true
     
     typeOf(person).getType(); // return 'Human'
     typeOf(person2).getType(); //return 'Human'
@@ -137,11 +137,11 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     //#special cases: instance of Anonymous (it behaves as the above examples)
     var myAnonymous = function(){};
     typeOf(new(function (){})).getType(); //return '#Anonymous'
-    typeOf(new (myAnonymous)).in('#Anonymous') //true
-    typeOf(new (myAnonymous)).in(myAnonymous) //true
-    typeOf(new (myAnonymous)).in(Object) //true
-    typeOf(new (myAnonymous)).in('Object') //true
-    typeOf(new (myAnonymous)).in(new(function(){})) //false
+    typeOf(new (myAnonymous)).In('#Anonymous') //true
+    typeOf(new (myAnonymous)).In(myAnonymous) //true
+    typeOf(new (myAnonymous)).In(Object) //true
+    typeOf(new (myAnonymous)).In('Object') //true
+    typeOf(new (myAnonymous)).In(new(function(){})) //false
     
 ```
 
@@ -155,7 +155,7 @@ This feature works exactly like the previous examples.
 
 ```js
 //for comparison: with one argument (default behavior)
-typeOfIn('lolipop').in([Number, [], 'String']); 
+typeOfIn('lolipop').In([Number, [], 'String']); 
 
 //with more than one argument:
 var typeOfIn = typeOf;
@@ -165,8 +165,8 @@ typeOfIn('lolipop',[Number, [], 'String']);
 //with zero argument : typeof-in expose getType() and in().
 var typeOf = require('typeof-in')();
 typeOf.getType('lolipop') //'String'
-typoOf.in('lolipop',Number, [], 'String');
-typoOf.in('lolipop',[Number, [], 'String']);
+typoOf.In('lolipop',Number, [], 'String');
+typoOf.In('lolipop',[Number, [], 'String']);
 
 ```
 
@@ -236,7 +236,7 @@ typeOf(test).In(Object)    //true
 - both: new String('test') and 'test' return the same type
 - same thing with *Numbers* and *Booleans*
 - NaN, Undefined, Null values have their own types 
-- use instanceof when necessary: typeOf(instance).in(constructor)
+- use instanceof when necessary: typeOf(instance).In(constructor)
 - and more!
 
 In some ways, it is the fusion of **typeof** and **instanceof**
