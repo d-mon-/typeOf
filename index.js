@@ -70,11 +70,11 @@
                             }
                             if (valueConstructor !== null) {
                                 return arg instanceof valueConstructor;
-                            } else if (arg !== null) {
-                                var argConstructor = (value !== null) ? getOwnConstructor(arg) : null;
-                                if (argConstructor !== null) {
-                                    return value instanceof argConstructor
-                                }
+                            }
+
+                            var argConstructor = (arg !== null) ? getOwnConstructor(arg) : null;
+                            if (argConstructor !== null) {
+                                return value instanceof argConstructor
                             }
                             return false;
                         }

@@ -69,7 +69,7 @@ if(myType.In('String')){
 ### using constructors:
 If the value passed inside typeOf is not an Object, its **In()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value. (**important:** some constructors are not supported by all browsers)
 
-Therefore, you can use typeOf-in like this:
+Therefore, you can use typeof-in like this:
 ```js
 typeOf(42).In(Number) // is equal to 'Number' === 'Number'
 typeOf(new Number(42)).In(Number) //is equal to new Number(42) instanceof Number
@@ -102,7 +102,7 @@ However, the library will not return an empty string('') but a "#Anonymous" type
     typeOf(new TypeError()).In('Error')    //false
     
     
-    //next:
+    //next example:
 
     function Human(){}; // ES6: class Human {}
     var Person = Human;
@@ -132,17 +132,17 @@ However, the library will not return an empty string('') but a "#Anonymous" type
     
     typeOf(person).getType(); //return 'Human'
     typeOf(person2).getType(); //return 'Human'
-    typeOf(new(function $(){})).getType(); //return '$'
-    typeOf(new(function _(){})).getType(); //return '_'
+    typeOf(new function $(){}).getType(); //return '$'
+    typeOf(new function _(){}).getType(); //return '_'
     
     //#special cases: instance of Anonymous (it behaves as the above examples)
     var myAnonymous = function(){};
-    typeOf(new(function (){})).getType(); //return '#Anonymous'
-    typeOf(new (myAnonymous)).In('#Anonymous') //true
-    typeOf(new (myAnonymous)).In(myAnonymous) //true
-    typeOf(new (myAnonymous)).In(Object) //true
-    typeOf(new (myAnonymous)).In('Object') //false
-    typeOf(new (myAnonymous)).In(new(function(){})) //false
+    typeOf(new myAnonymous).getType(); //return '#Anonymous'
+    typeOf(new myAnonymous).In('#Anonymous') //true
+    typeOf(new myAnonymous).In(myAnonymous) //true
+    typeOf(new myAnonymous).In(Object) //true
+    typeOf(new myAnonymous).In('Object') //false
+    typeOf(new myAnonymous).In(new(function (){})) //false
     
 ```
 
@@ -199,38 +199,6 @@ console.log(typeof new Number(NaN)) //'object'
 ```
 And one of the most famous example in JS is NaN (a.K.a Not A Number) which return a type of number...
 
-and some more...
-
-## Important
-
-[typeof--](https://www.npmjs.com/package/typeof--) uses **constructor(.name)** when possible, and is therefore influenced by the change of the constructor function!
-
-Which imply that: an object "A" deriving from another object "B" will have the constructor of "B" and not "A", you can avoid this problem by using Object.assign, _.assign or _.extend...
-
-Moreover, any change on the constructor will modify the type returned (cf: [See the table of typeof--](https://github.com/d-mon-/typeof--#tables-of-common-values) ).
-
-To avoid such problem, you must trigger **instanceof** by passing constructors.
-```js
-var typeOf = require('typeof-in');
-
-function Example(){};
-
-var test = new Example('test'); 
-//before constructor corruption
-typeOf(test).In('Example') //true
-typeOf(test).In('Object')  //false
-typeOf(test).In(Example)   //true
-typeOf(test).In(Object)    //true
-
-Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){}
-
-//after constructor corruption
-typeOf(test).In('Example') //false
-typeOf(test).In('Object')  //true
-typeOf(test).In(Example)   //true
-typeOf(test).In(Object)    //true
-```
-
 ### Funny thing about built-in objects:
 ```js
 //All objects except Object.prototype are an instance of Object!
@@ -238,12 +206,13 @@ Object.prototype instanceof Object //false
 Object.prototype instanceof Object.prototype.constructor //false
 typeOf(Object.prototype).In('Object') //true because Object.prototype.toString(Object.prototype) return '[Object Object]'
 
+//let's go deeper:
 Number.prototype.valueOf() //return 0
 Array.prototype.valueOf() // return [],
 Boolean.prototype.valueOf() // return false,
 String.prototype.valueOf() // return ""
 
-//but... let's take one of them, for example Number.prototype
+//so, each prototypes return a default instance, but... let's take one of them, for example Number.prototype
 
 Number.prototype instanceof Number //false
 Number.prototype instanceof Number.prototype.constructor //false
@@ -287,6 +256,38 @@ In some ways, it is the fusion of **typeof** and **instanceof**
 >   and many more... (in fact, you can check almost everything)
 
 [JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
+
+## Important
+
+[typeof--](https://www.npmjs.com/package/typeof--) uses **constructor(.name)** when possible, and is therefore influenced by the change of the constructor function!
+
+Which imply that: an object "A" deriving from another object "B" will have the constructor of "B" and not "A", you can avoid this problem by using Object.assign, _.assign or _.extend...
+
+Moreover, any change on the constructor will modify the type returned (cf: [See the table of typeof--](https://github.com/d-mon-/typeof--#tables-of-common-values) ).
+
+To avoid such problem, you must trigger **instanceof** by passing constructors.
+```js
+var typeOf = require('typeof-in');
+
+function Example(){};
+
+var test = new Example('test'); 
+//before constructor corruption
+typeOf(test).In('Example') //true
+typeOf(test).In('Object')  //false
+typeOf(test).In(Example)   //true
+typeOf(test).In(Object)    //true
+
+Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){}
+
+//after constructor corruption
+typeOf(test).In('Example') //false
+typeOf(test).In('Object')  //true
+typeOf(test).In(Example)   //true
+typeOf(test).In(Object)    //true
+```
+
+
 
 # with requireJS (AMD)
 
