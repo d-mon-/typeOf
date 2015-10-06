@@ -7,18 +7,19 @@
         var path = 'typeof--';
         if (typeof exports !== 'undefined') {
             var typeOf = require(path);
-            var extractFunctionName = require(path+'/extractFunctionName');
+            var extractFunctionName = require(path + '/extractFunctionName');
+            var getOwnConstructor = require(path + '/getOwnConstructor');
+
             if (typeof module !== 'undefined' && module.exports) {
-                exports = module.exports = factory(typeOf,extractFunctionName);
+                exports = module.exports = factory(typeOf, extractFunctionName, getOwnConstructor);
             }
-            exports.typeOf = factory(typeOf,extractFunctionName);
+            exports.typeOf = factory(typeOf, extractFunctionName, getOwnConstructor);
         }
         if (typeof define === 'function' && define.amd) {
-            define( [path+'/index',path+'/extractFunctionName'], factory);
+            define([path + '/index', path + '/extractFunctionName', path + '/getOwnConstructor'], factory);
         }
-    }(function (typeOf,extractFunctionName) {
+    }(function (typeOf, extractFunctionName, getOwnConstructor) {
         "use strict";
-        var functionToString = Function.prototype.toString;
         var arraySlice = Array.prototype.slice;
 
         function TypeOfBuilder(value) {
@@ -34,6 +35,13 @@
              * @type {String}
              */
             var VALUE_TYPE = typeOf(value);
+            /**
+             * store constructor of value
+             * @private
+             * @type {String}
+             */
+            var valueConstructor;
+
 
             /**
              * check if type is equal/in value
@@ -45,15 +53,6 @@
                 var arg_type = typeOf(arg);
                 switch (arg_type) {
                     case 'String':
-                        if (arg === '') {
-                            return VALUE_TYPE === 'String';
-                        }
-                        if (arg === 'Object') {
-                            return value instanceof Object;
-                        }
-                        if (arg === 'Error') {
-                            return value instanceof Error;
-                        }
                         return VALUE_TYPE === arg;
                     case 'Function':
                         return (IS_OBJECT === true) ? value instanceof arg : _in(extractFunctionName(arg));
@@ -65,13 +64,19 @@
                         }
                         return (arg.length === 0) ? _in('Array') : false;
                     case VALUE_TYPE:
-                        if (IS_OBJECT === true && typeof arg === 'object' && arg !== null) {
-                            //instance against instance
-                            if (typeof arg.constructor === 'function') {
-                                return value instanceof arg.constructor
-                            } else if (typeof value.constructor === 'function') {
-                                return arg instanceof value.constructor;
+                        if ((IS_OBJECT === true && value !== null) || (typeof arg === 'object' && arg !== null)) {
+                            if (typeof valueConstructor === 'undefined') {
+                                valueConstructor = (value !== null) ? getOwnConstructor(value) : null;
                             }
+                            if (valueConstructor !== null) {
+                                return arg instanceof valueConstructor;
+                            } else if (arg !== null) {
+                                var argConstructor = (value !== null) ? getOwnConstructor(arg) : null;
+                                if (argConstructor !== null) {
+                                    return value instanceof argConstructor
+                                }
+                            }
+                            return false;
                         }
                     default:
                         return _in(arg_type);

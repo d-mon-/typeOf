@@ -20,7 +20,7 @@ test('null/undefined', function (assert) {
     assert.equal(actual, expected, "typeOf(null).In('Null') should return true");
 
     actual = typeOf(null).In(null);
-    assert.equal(actual, expected, "typeOf(null).In('Null') should return true");
+    assert.equal(actual, expected, "typeOf(null).In(null) should return true");
 
     actual = typeOf(null).In('Object');
     assert.equal(actual, !expected, "typeOf(null).In({}) should return false");
@@ -65,9 +65,6 @@ test('string', function (assert) {
     var actual = typeOf('').In('String');
     assert.equal(actual, expected, "typeOf('').In('String') should return true");
 
-    typeOf('').In('');
-    assert.equal(actual, expected, "typeOf('').In('') should return true");
-
     actual = typeOf('myStringIsCute').In(String);
     assert.equal(actual, expected, "typeOf('myStringIsCute').In(String) should return true");
 
@@ -105,10 +102,6 @@ test('array', function (assert) {
     actual = typeOf([42]).In(Array);
     assert.equal(actual, expected, "typeOf(new Array(42)).In(Array) should return true");
 
-    //regression test
-    actual = typeOf([42]).In('Object');
-    assert.equal(actual, expected, "typeOf([42]).In('Object') should return true");
-
     actual = typeOf([42]).In(Object);
     assert.equal(actual, expected, "typeOf([42]).In(Object) should return true");
 
@@ -120,7 +113,7 @@ test('regex', function (assert) {
     var actual = typeOf(/test/).In('RegExp');
     assert.equal(actual, expected, "typeOf(/test/).In('RegExp') should return true");
 
-    actual = typeOf(/test/).In('Object');
+    actual = typeOf(/test/).In(Object);
     assert.equal(actual, expected, "typeOf(/test/).In('Object') should return true");
 
     actual = typeOf(/test/).In(RegExp);
@@ -173,7 +166,7 @@ test('object', function (assert) {
     assert.equal(actual, expected, "typeOf(person2).In('Personnage') should return true");
 
     actual = typeOf(person2).In('Object');
-    assert.equal(actual, expected, "typeOf(person2).In('Object') should return true");
+    assert.equal(actual, !expected, "typeOf(person2).In('Object') should return false");
 
     actual = typeOf(person2).In(Object);
     assert.equal(actual, expected, "typeOf(person2).In(Object) should return true");
@@ -208,7 +201,7 @@ test('error', function (assert) {
     assert.equal(actual, expected, "typeOf(new TypeError()).In('TypeError') should return true");
 
     actual = typeOf(new TypeError()).In('Error');
-    assert.equal(actual, expected, "typeOf(new TypeError()).In('Error'); should return true");
+    assert.equal(actual, !expected, "typeOf(new TypeError()).In('Error'); should return true");
 
     actual = typeOf(new Error()).In('Error');
     assert.equal(actual, expected, " typeOf(new Error()).In('Error'); should return true");
@@ -235,9 +228,6 @@ test('JSON/Math', function(assert){
     assert.equal(actual, expected, "typeOf(JSON).In('JSON') should return true");
 
     actual = typeOf(JSON).In(JSON);
-    assert.equal(actual, expected, "typeOf(JSON).In(JSON) should return true");
-
-    actual = typeOf(JSON).In('Object');
     assert.equal(actual, expected, "typeOf(JSON).In(JSON) should return true");
 
     actual = typeOf(Math).In('Math');
@@ -300,25 +290,22 @@ test('Anonymous',function(assert) {
     var myAnonymous = function(){};
     
     var expected = true;
-    var actual = typeOf(new (myAnonymous)).In('#Anonymous');
+    var actual = typeOf(new myAnonymous()).In('#Anonymous');
     assert.equal(actual, expected, "typeOf(new (function(){})).In('#Anonymous') should return true");
 
-    actual = typeOf(new (myAnonymous)).In('Object');
-    assert.equal(actual, expected, "typeOf(new (function(){})).In('true') should return true");
-
-    var actual = typeOf(new (myAnonymous)).In('myAnonymous');
+    var actual = typeOf(new myAnonymous()).In('myAnonymous');
     assert.equal(actual, !expected, "typeOf(new (function(){})).In('myAnonymous') should return false");
 
-    var actual = typeOf(new (myAnonymous)).In(new (function(){}));
+    var actual = typeOf(new myAnonymous()).In(new (function(){}));
     assert.equal(actual, !expected, "typeOf(new (myAnonymous)).In(new (function(){})) should return false");
 
-    var actual = typeOf(new (myAnonymous)).In(myAnonymous);
+    var actual = typeOf(new myAnonymous()).In(myAnonymous);
     assert.equal(actual, expected, " typeOf(new (myAnonymous)).In(myAnonymous) should return true");
 
-    var actual = typeOf(new (myAnonymous)).In(new (myAnonymous));
+    var actual = typeOf(new myAnonymous()).In(new myAnonymous());
     assert.equal(actual, expected, " typeOf(new (myAnonymous)).In(myAnonymous) should return true");
 
-    var actual = typeOf(new (myAnonymous)).In(Object);
+    var actual = typeOf(new myAnonymous()).In(Object);
     assert.equal(actual, expected, " typeOf(new (myAnonymous)).In(myAnonymous) should return true");
 
     assert.end()
@@ -350,19 +337,13 @@ test('array of string', function (assert) {
     assert.end();
 });
 
-test('array of Function/primitive', function (assert) {
+test('array of Constructor', function (assert) {
     var expected = true;
     var actual = typeOf('myStringIsCute').In([Number, Object, String]);
     assert.equal(actual, expected, "typeOf('myStringIsCute').In([Number,String,Object]) should return true")
 
     actual = typeOf('myStringIsCute').In([Number, Object]);
     assert.equal(actual, !expected, "typeOf('myStringIsCute').In([Number,Object]) should return false");
-
-    actual = typeOf(42).In([[], null, undefined, {}, 3.14]);
-    assert.equal(actual, expected, "typeOf(42).In(['String',{},3.14]) should return true");
-
-    actual = typeOf('test').In([[], null, undefined, {}, 3.14,'']);
-    assert.equal(actual, expected, "typeOf('test').In([[], null, undefined, {}, 3.14,'']) should return true");
 
     //nested
     actual = typeOf('myStringIsCute').In([Number, [{}, [], [String]]]);
@@ -402,6 +383,31 @@ test('typeof-function-oriented' , function (assert) {
     expected = 'String';
     assert.equal(actual, expected, "typeOf.getType('lolipop') should return 'String'");
 
+
+    assert.end();
+});
+
+
+//############################ regressive test ###############################
+test('typeof-function-oriented' , function (assert) {
+    var expected = true;
+    var actual = typeOf(new (function Null(){})()).In(null);
+    assert.equal(actual, !expected, "typeOf(new (function Null(){})()).In(null) should return false")
+
+    actual = typeOf(new (function Undefined(){})()).In(undefined);
+    assert.equal(actual, !expected, "typeOf(new (function Undefined(){})()).In(undefined); should return false")
+
+    actual = typeOf(Array.prototype).In('Array');
+    assert.equal(actual, expected, " typeOf(Array.prototype).In('Array') should return true");
+
+    actual = typeOf(Array.prototype).In(Array);
+    assert.equal(actual, !expected, " typeOf(Array.prototype).In(Array) should return false");
+
+    actual = typeOf(Array.prototype).In(Object);
+    assert.equal(actual, expected, " typeOf(Array.prototype).In(Object) should return true");
+
+    actual = typeOf(Object.prototype).In(Object);
+    assert.equal(actual, !expected, " typeOf(Objecty.prototype).In(Object) should return true");
 
     assert.end();
 });

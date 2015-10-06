@@ -1,7 +1,7 @@
 # Typeof-in ( + instanceof )
 allow you to compare the type (or instance) of your value with several types (or constructor), and finally return a **Boolean**.
 
-compatible with **IE**
+compatible with **IE 6+**
 
 **Consider using [lodash](https://lodash.com) or [kind-of](https://www.npmjs.com/package/kind-of) first!**
 # Use cases:
@@ -29,6 +29,7 @@ You might also want to compare your value with a set of different types.
 ```js
 //using an Array (better performance)
 typeOf('lolipop').In(['Number', 'String', 'Object','Array']);
+
 //or multiple arguments
 typeOf('lolipop').In('Number', 'String', 'Object', 'Array');
 ```
@@ -44,7 +45,7 @@ typeOf(new TypeError()).In(/.+Error$/); //is an error other than 'Error' type
 ### ES6 and others objects:
 This library can check all kind of objects. Allowing you to compare *ES6* features like Promises, Generators, fat arrows... which is pretty neat.
 ```js
-typeOf(new Promise(function(){}).In('Promise')
+typeOf(new Promise(function(){}).In('Promise') 
 typeOf(function*(){}).In('GeneratorFunction')
 typeOf(()=>{}).In('Function')
 ```
@@ -60,50 +61,48 @@ if(myType.In('String')){
     //you need to init your value!
 }else if(myType.In(/.+Error$/)){
     //something bad happened! but not a global error
-}else if(myType.In(Error)){
-    //global error handler... :(
+}else if(myType.In('Error')){ 
+    //is type 'Error'... 
 }
 ```
 
-### some other tricks:
-*it might impact performance*
-
-If the value passed inside typeOf is not an Object, its **in()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value. (**important:** some constructors are not supported by all browsers)
+### using constructors:
+If the value passed inside typeOf is not an Object, its **In()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value. (**important:** some constructors are not supported by all browsers)
 
 Therefore, you can use typeOf-in like this:
 ```js
-//with contructors
+typeOf(42).In(Number) // is equal to 'Number' === 'Number'
+typeOf(new Number(42)).In(Number) //is equal to new Number(42) instanceof Number
+
+//with Array
 var GeneratorFunction = (function*(){}).constructor;
-typeOf(1).In([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
+typeOf(42).In([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
 
 //is equal to
-typeOf(1).In(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'])
+(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'].indexOf('Number') !== -1)
 ```
+Which is why I would recommend using constructors for general purpose. 
 
-### dealing with instanceof:
+### dealing with objects:
 The following examples show different cases when typeof-in will use instanceof to compare the value with the constructor of a prototype.
 
-However, the library will not return an empty string('') but a "#Anonymous" value in the case of an instance of an anonymous prototype. 
+However, the library will not return an empty string('') but a "#Anonymous" type in the case of an instance of an anonymous prototype to improve readability. 
 ```js
-    //with primitive value, if the type passed in "in()" is a constructor, then typeof-in will retrieve its constructor name
-    typeOf(42).In(Number)  // is equal to typeOf(42).In('Number')
-    typeOf(new Number(42)).In(Number) //will use instanceof
-
-    typeOf(new String('test')).In(String)
-    typeOf({}).In(Object)
-    typeOf([]).In(Object)   //return true
-    typeOf([]).In(Array)    //return true
-    typeOf([]).In('Object') //return true, an Array is an Object
-    typeOf([]).In('Array')  //return true
-    //typeOf(/myRegex/) has the same behavior than Array.
+    typeOf({}).In(Object) //true
+    typeOf({}).In('Object') //true
+    
+    typeOf([]).In(Object)   //true
+    typeOf([]).In(Array)    //true
+    typeOf([]).In('Object') //false
+    typeOf([]).In('Array')  //true
     
     typeOf(new TypeError()).In(Error)      //true
     typeOf(new TypeError()).In(TypeError)  //true
-    typeOf(new TypeError()).In('TypeError')//true, a TypeError is an Error
-    typeOf(new TypeError()).In('Error')    //true
+    typeOf(new TypeError()).In('TypeError')//true
+    typeOf(new TypeError()).In('Error')    //false
     
     
-    //OR
+    //next:
 
     function Human(){}; // ES6: class Human {}
     var Person = Human;
@@ -115,8 +114,8 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     var person2 = new Person2();  
     
     //#instance against instance
-    //if one of them has a constructor, use: x instanceof y.constructor
-    //otherwise, compare types as String.
+    //if one of them has a valid constructor, use: x instanceof y.constructor
+    //otherwise, return false;
     typeOf(person).In(_person); //true
     typeOf(person).In(__person); //true    
     typeOf(person).In(person2); //false
@@ -124,12 +123,14 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     //#instance against constructor
     typeOf(person).In(Person); //true   
     typeOf(person).In(Human); //true
+    typeOf(person).In('Human'); //true
+    
     typeOf(person2).In(Human); //false
     typeOf(person2).In('Human'); //true
     typeOf(person2).In(Object); //true
-    typeOf(person2).In('Object'); //true
+    typeOf(person2).In('Object'); //false
     
-    typeOf(person).getType(); // return 'Human'
+    typeOf(person).getType(); //return 'Human'
     typeOf(person2).getType(); //return 'Human'
     typeOf(new(function $(){})).getType(); //return '$'
     typeOf(new(function _(){})).getType(); //return '_'
@@ -140,14 +141,14 @@ However, the library will not return an empty string('') but a "#Anonymous" valu
     typeOf(new (myAnonymous)).In('#Anonymous') //true
     typeOf(new (myAnonymous)).In(myAnonymous) //true
     typeOf(new (myAnonymous)).In(Object) //true
-    typeOf(new (myAnonymous)).In('Object') //true
+    typeOf(new (myAnonymous)).In('Object') //false
     typeOf(new (myAnonymous)).In(new(function(){})) //false
     
 ```
 
 
 ## Through a function
-*decrease readability*
+(*decrease readability*)
 
 The recent version of typeof-in (>= 3.0.0) allows you to directly call the function in charge of the comparison, and by extension, not create an object every time you use typeOf() in your code. 
 
@@ -159,10 +160,11 @@ typeOfIn('lolipop').In([Number, [], 'String']);
 
 //with more than one argument:
 var typeOfIn = typeOf;
+typeOfIn('lolipop','String');
 typeOfIn('lolipop',Number, [], 'String'); 
 typeOfIn('lolipop',[Number, [], 'String']); 
 
-//with zero argument : typeof-in expose getType() and in().
+//with zero argument : typeof-in expose getType() and In().
 var typeOf = require('typeof-in')();
 typeOf.getType('lolipop') //'String'
 typoOf.In('lolipop',Number, [], 'String');
@@ -216,11 +218,11 @@ function Example(){};
 var test = new Example('test'); 
 //before constructor corruption
 typeOf(test).In('Example') //true
-typeOf(test).In('Object')  //true
+typeOf(test).In('Object')  //false
 typeOf(test).In(Example)   //true
 typeOf(test).In(Object)    //true
 
-Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){} //typeOf(test).getType() will return 'Object'
+Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){}
 
 //after constructor corruption
 typeOf(test).In('Example') //false
@@ -229,13 +231,36 @@ typeOf(test).In(Example)   //true
 typeOf(test).In(Object)    //true
 ```
 
+### Funny thing about built-in objects:
+```js
+//All objects except Object.prototype are an instance of Object!
+Object.prototype instanceof Object //false
+Object.prototype instanceof Object.prototype.constructor //false
+typeOf(Object.prototype).In('Object') //true because Object.prototype.toString(Object.prototype) return '[Object Object]'
+
+Number.prototype.valueOf() //return 0
+Array.prototype.valueOf() // return [],
+Boolean.prototype.valueOf() // return false,
+String.prototype.valueOf() // return ""
+
+//but... let's take one of them, for example Number.prototype
+
+Number.prototype instanceof Number //false
+Number.prototype instanceof Number.prototype.constructor //false
+Number.prototype instanceof Object //true
+typeof Number.prototype // 'object'
+typeOf(Number.prototype).In('Number') //true because Object.prototype.toString(Number.prototype) return '[Object Number]'
+
+//this is quite evil...
+```
+
 ## typeof-in supports:
 
 - Regex
 - Multi choices
 - both: new String('test') and 'test' return the same type
 - same thing with *Numbers* and *Booleans*
-- NaN, Undefined, Null values have their own types 
+- NaN, undefined, null values have their own types 
 - use instanceof when necessary: typeOf(instance).In(constructor)
 - and more!
 
