@@ -5,7 +5,7 @@ compatible with **IE6+**
 
 best performances on browsers/servers supporting ES6: Function.name
 
-#Foretaste:
+# Foretaste:
 ```js
     var typeOf = require('typeof-in'); 
     typeOf('lollipop').In([null, undefined, NaN, Number, Array, Object]) 
