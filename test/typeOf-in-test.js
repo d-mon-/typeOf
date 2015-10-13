@@ -16,8 +16,8 @@ test('typeOf().getType()', function (assert) {
 
 test('null/undefined', function (assert) {
     var expected = true;
-    var actual = typeOf(null).In('Null');
-    assert.equal(actual, expected, "typeOf(null).In('Null') should return true");
+    var actual = typeOf(null).In('#Null');
+    assert.equal(actual, expected, "typeOf(null).In('#Null') should return true");
 
     actual = typeOf(null).In(null);
     assert.equal(actual, expected, "typeOf(null).In(null) should return true");
@@ -25,8 +25,8 @@ test('null/undefined', function (assert) {
     actual = typeOf(null).In('Object');
     assert.equal(actual, !expected, "typeOf(null).In({}) should return false");
 
-    actual = typeOf(undefined).In('Undefined');
-    assert.equal(actual, expected, "typeOf(undefined).In('Undefined') should return true");
+    actual = typeOf(undefined).In('#Undefined');
+    assert.equal(actual, expected, "typeOf(undefined).In('#Undefined') should return true");
 
     actual = typeOf(undefined).In(undefined);
     assert.equal(actual, expected, "typeOf(undefined).In(undefined) should return true");
@@ -47,8 +47,8 @@ test('number', function (assert) {
     actual = typeOf(3.14).In(Number);
     assert.equal(actual, expected, "typeOf(3.14).In(Number) should return true");
 
-    actual = typeOf(NaN).In('NaN');
-    assert.equal(actual, expected, "typeOf(NaN).In('NaN') should return true");
+    actual = typeOf(NaN).In('#NaN');
+    assert.equal(actual, expected, "typeOf(NaN).In('#NaN') should return true");
 
     actual = typeOf(NaN).In(NaN);
     assert.equal(actual, expected, "typeOf(NaN).In(NaN) should return true");
@@ -355,32 +355,32 @@ test('array of Constructor', function (assert) {
 test('multi arguments', function (assert) {
     var expected = true;
     var actual = typeOf('myStringIsCute').In(Number, [], 'String');
-    assert.equal(actual, expected, "typeOf('myStringIsCute').In(Number,[],'String') should return true")
+    assert.equal(actual, expected, "typeOf('myStringIsCute').In(Number,[],'String') should return true");
 
     actual = typeOf('myStringIsCute').In(Number, [], [Object, String]);
-    assert.equal(actual, expected, "typeOf('myStringIsCute').In(Number,[],[Object,String]) should return true")
+    assert.equal(actual, expected, "typeOf('myStringIsCute').In(Number,[],[Object,String]) should return true");
     assert.end();
 });
 
 test('typeof-function-oriented' , function (assert) {
     var expected = true;
     var actual = typeOf('myStringIsCute',Number, [], 'String');
-    assert.equal(actual, expected, "typeOf('myStringIsCute',Number, [], 'String'); should return true")
+    assert.equal(actual, expected, "typeOf('myStringIsCute',Number, [], 'String'); should return true");
 
     actual = typeOf('myStringIsCute','String');
-    assert.equal(actual, expected, "typeOf('myStringIsCute', 'String'); should return true")
+    assert.equal(actual, expected, "typeOf('myStringIsCute', 'String'); should return true");
 
     actual = typeOf('myStringIsCute',[Number, [], Object, String]);
-    assert.equal(actual, expected, " typeOf('myStringIsCute',[Number, [], Object, String]) should return true")
+    assert.equal(actual, expected, " typeOf('myStringIsCute',[Number, [], Object, String]) should return true");
 
     actual = typeOf().In('myStringIsCute',Number, [], 'String');
-    assert.equal(actual, expected, "typeOf.In('myStringIsCute',Number, [], 'String') should return true")
+    assert.equal(actual, expected, "typeOf.In('myStringIsCute',Number, [], 'String') should return true");
 
     actual = typeOf().In('myStringIsCute',[Number, [], 'String']);
-    assert.equal(actual, expected, "typeOf.In('myStringIsCute',[Number, [], Object, String]) should return true")
+    assert.equal(actual, expected, "typeOf.In('myStringIsCute',[Number, [], Object, String]) should return true");
 
-    actual = typeOf().getType('lolipop');
     expected = 'String';
+    actual = typeOf().getType('lollipop');
     assert.equal(actual, expected, "typeOf.getType('lolipop') should return 'String'");
 
 
@@ -389,25 +389,33 @@ test('typeof-function-oriented' , function (assert) {
 
 
 //############################ regressive test ###############################
-test('typeof-function-oriented' , function (assert) {
+test('regressive test' , function (assert) {
     var expected = true;
-    var actual = typeOf(new (function Null(){})()).In(null);
-    assert.equal(actual, !expected, "typeOf(new (function Null(){})()).In(null) should return false")
+    var actual = typeOf(new Boolean(true)).In(true);
+    assert.equal(actual, expected, "typeOf(new Boolean(true)).In(true) should return true");
 
-    actual = typeOf(new (function Undefined(){})()).In(undefined);
-    assert.equal(actual, !expected, "typeOf(new (function Undefined(){})()).In(undefined); should return false")
+    actual = typeOf(true).In(new Boolean(true));
+    assert.equal(actual, expected, "typeOf(true).In(new Boolean(true)) should return true");
 
     actual = typeOf(Array.prototype).In('Array');
     assert.equal(actual, expected, " typeOf(Array.prototype).In('Array') should return true");
 
-    actual = typeOf(Array.prototype).In(Array);
-    assert.equal(actual, !expected, " typeOf(Array.prototype).In(Array) should return false");
-
     actual = typeOf(Array.prototype).In(Object);
     assert.equal(actual, expected, " typeOf(Array.prototype).In(Object) should return true");
 
+
+    expected = false;
+    actual = typeOf(Array.prototype).In(Array);
+    assert.equal(actual, expected, " typeOf(Array.prototype).In(Array) should return false");
+
+    actual = typeOf(new (function Null(){})()).In(null);
+    assert.equal(actual, expected, "typeOf(new (function Null(){})()).In(null) should return false");
+
+    actual = typeOf(new (function Undefined(){})()).In(undefined);
+    assert.equal(actual, expected, "typeOf(new (function Undefined(){})()).In(undefined); should return false");
+
     actual = typeOf(Object.prototype).In(Object);
-    assert.equal(actual, !expected, " typeOf(Objecty.prototype).In(Object) should return true");
+    assert.equal(actual, expected, " typeOf(Objecty.prototype).In(Object) should return false");
 
     assert.end();
 });

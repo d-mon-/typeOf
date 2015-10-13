@@ -1,11 +1,11 @@
 {
   "name": "typeof-in",
-  "version": "3.1.13",
+  "version": "3.2.0",
   "description": "compare the type of your value with one or several types",
   "main": "index.js",
   "scripts": {
     "test": "node ./test/typeOf-in-test.js | tap-nyan",
-    "typein-test": "node ./test/typeOf-in-test.js"
+    "typeofin-test": "node ./test/typeOf-in-test.js"
   },
   "repository": {
     "type": "git",
@@ -43,6 +43,6 @@
     "tape": "^4.2.0"
   },
   "dependencies": {
-    "typeof--": "^1.2.13"
+    "typeof--": "^1.3.0"
   }
 }

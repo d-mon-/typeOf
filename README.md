@@ -1,293 +1,237 @@
-# Typeof-in ( + instanceof )
-allow you to compare the type (or instance) of your value with several types (or constructor), and finally return a **Boolean**.
+# TypeOf-In
+allows your values to be compared with a set of **Constructors** or **Strings** representing the expected type. 
 
-compatible with **IE 6+**
+compatible with **IE6+**
 
-**Consider using [lodash](https://lodash.com) or [kind-of](https://www.npmjs.com/package/kind-of) first!**
-# Use cases:
+best performances on browsers/servers supporting ES6: Function.name
+
+#Foretaste:
+```js
+    var typeOf = require('typeof-in'); 
+    typeOf('lollipop').In([null, undefined, NaN, Number, Array, Object]) 
+```
+# Why use *TypeOf-In* ? 
+## typeof and instanceof are, somehow, broken
+### null
+For example, **null** has a type of an object, but it is not an instance of Object.
+```js
+typeof null; // 'object'
+null instanceof Object //false
+``` 
+**\[fun fact\]** *Object.prototype* has the same behavior as *null* with *typeof* and *instanceof*
+
+### RegEx
+Using a regular expression literal, someone would expect **typeof** to return a specific value like **"regexp"**, but it's not the case. (it's not a primitive value but a literal...)
+```js
+typeof /regularExpression/ // 'object'
+/regularExpression/ instanceof RegExp // true
+```
+### Primitives x Objects
+Unlike RegEx, other values like **Number**, **String** or **Boolean** have some issues when we want to retrieve their type when we use them as primitive or object (*wrapper*).
+```js
+typeof new Number(42) //'object'
+typeof Number(42) //'number'
+typeof 42 //'number'
+
+666 instanceof Number //false
+new Number(42) instanceof (666).constructor //true, because:
+(666).constructor === Number.prototype.constructor
+```
+So, the previous example shows that it is possible to verify a primitive value with **typeof** and its wrapper with **instanceof** but we can't test both of them with the same method even if they share the same constructor. One method to deal with this problem would be to use **typeof value.valueOf()**.
+
+### NaN
+One of the most famous example in JavaScript is **NaN** (a.K.a *"Not a Number"*) which return a type of: **number**... \* sigh \*
+```js
+typeof NaN //'number'
+typeof new Number(NaN) //'object'
+```
+
+### prototypes
+As you may have noticed above, prototypes have a weird behavior. For example, the prototype of an Array is an empty Array, and it is the same thing with Number, String, Boolean... which store a default value (0,"",false). Therefore, we would expect them to be an instance of their own constructor. But, sadly, it is not the case... 
+```js
+Number.prototype instanceof Number //false
+Number.prototype instanceof Number.prototype.constructor //false
+
+//the best method so far to deal with it.
+Object.prototype.toString.call(Number.prototype) //'[object Number]'
+```
+
+**And many more...** 
+
+## why TypeOf-In help us:
+
+TypeOf-In uses [typeof--](https://www.npmjs.com/package/typeof--) instead of **typeof** and **instanceof** to retrieve the type. **typeof--** extracts the constructor name or call *Object.prototype.toString* to get the type matching your value which allows this library to test primitive value, Global Object and custom one.
+[Global Objects reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
+> **TypeOf-In supports:**
+> 
+> - **Regex**
+> 
+> - **Multi choices**
+> 
+> - **primitive values and their respective wrapper return the same type**
+> 
+> - **NaN, undefined and null have their own types: #NaN, #Undefined and #Null**
+> 
+> - **it uses instanceof when necessary**
+> 
+> - **and more!**
+
+[table of type returned by typeof-- (as string)](https://www.npmjs.com/package/typeof--#tables-of-common-values)  
+
+# Usage:
 ```js
     var typeOf = require('typeof-in'); 
 ```
 ## Through an object
 ### basic:
-You can retrieve the type or compare it with a string representing an expecting type.
+You can retrieve the type of your value as **string** by using **getType**
 ```js
-typeOf('test').getType(); //return 'String' (see 'typeOf only' below);
-
-//return a Boolean, in these cases: true.
-typeOf('lolipop').In('String');
-typeOf(null).In('Null');
-typeOf(undefined).In('Undefined');
-typeOf(NaN).In('NaN');
-typeOf(new Number(NaN)).In('NaN');
+typeOf('lollipop').getType(); //'String'
 ```
+Or you can test your value with a **string** representing an expected type, or by using its **constructor (or literal value)**. For performance issues, you would prefer to use **strings** as much as you can. 
+```js
+//better performances, multi-platform
+typeOf('lollipop').In('String');             //'String' === 'String'
+typeOf(new String('lollipop')).In('String'); //'String' === 'String'
+typeOf(null).In('#Null');                    // '#Null' === '#Null'
+
+//better readability, use instanceof when possible
+typeOf('lollipop').In(String);             //'String' === 'String'
+typeOf(new String('lollipop')).In(String); // x instanceof String
+typeOf(null).In(null);                     // '#Null' === '#Null'
+```
+(**important:** some constructors are not supported by all browsers)
 
 ### multi:
 
 You might also want to compare your value with a set of different types.
-
 ```js
-//using an Array (better performance)
-typeOf('lolipop').In(['Number', 'String', 'Object','Array']);
+//using an Array (improve performances)
+typeOf('lollipop').In([null, undefined, NaN, Number]); //false
 
-//or multiple arguments
-typeOf('lolipop').In('Number', 'String', 'Object', 'Array');
+//or with multiple arguments
+typeOf('lollipop').In(null, undefined, NaN, Number);
 ```
 
 ### regex:
-Furthermore, typeof-in also supports Regex against your value, 
+Furthermore, TypeOf-In also supports RegEx against your value, 
 
-which is quite useful with < ****Error> types for example. [about Error types](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
+which is quite useful with < ****Error> types for example. [about Errors](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error)
 ```js
-typeOf(new TypeError()).In(/.+Error$/); //is an error other than 'Error' type
+typeOf(new TypeError()).In(/.+Error$/); //not a Global Error
 ```
 
 ### ES6 and others objects:
-This library can check all kind of objects. Allowing you to compare *ES6* features like Promises, Generators, fat arrows... which is pretty neat.
+This library can check all kind of objects. Allowing you to compare **ES6** features like Promises, Generators, fat arrows... which is pretty neat.
 ```js
-typeOf(new Promise(function(){}).In('Promise') 
+typeOf(new Promise(function(){}).In(Promise) 
+typeOf(()=>{}).In(Function)
 typeOf(function*(){}).In('GeneratorFunction')
-typeOf(()=>{}).In('Function')
+//or
+var GeneratorFunction = (function*(){}).constructor
+typeOf(function*(){}).In(GeneratorFunction)
 ```
 
 ### calling several times:
-This is the main advantage of using typeof-in through an object, it allows you to deal with the same value in different ways
+This is the main advantage of using TypeOf-In through an object, it allows you to deal with the same value in different ways
 ```js
 var myType = typeOf('test');
-//call the "in" method several times
-if(myType.In('String')){
+if(myType.In(String)){
     //do something with the value as a string
-}else if(myType.In(['Null','Undefined'])){
+}else if(myType.In([null,undefined])){
     //you need to init your value!
 }else if(myType.In(/.+Error$/)){
     //something bad happened! but not a global error
-}else if(myType.In('Error')){ 
+}else if(myType.In(Error)){ 
     //is type 'Error'... 
 }
 ```
 
-### using constructors:
-If the value passed inside typeOf is not an Object, its **In()** method will never call instanceof when a constructor is passed as parameter, however, it will retrieve its constructor name to check if it match the type of your value. (**important:** some constructors are not supported by all browsers)
 
-Therefore, you can use typeof-in like this:
+### dealing with Objects:
+This example shows different scenario where TypeOf-In will have a different behavior if the type is passed as a **string** or as a **constructor**.
+
+**Important:** the library will not return an empty string("") but a "#Anonymous" type in the case of an instance of an anonymous constructor to improve readability. 
 ```js
-typeOf(42).In(Number) // is equal to 'Number' === 'Number'
-typeOf(new Number(42)).In(Number) //is equal to new Number(42) instanceof Number
-
-//with Array
-var GeneratorFunction = (function*(){}).constructor;
-typeOf(42).In([null, undefined,NaN,Array,Object,Number,String,GeneratorFunction,Function])
-
-//is equal to
-(['Null','Undefined','NaN','Array','Object','Number','String','GeneratorFunction','Function'].indexOf('Number') !== -1)
-```
-Which is why I would recommend using constructors for general purpose. 
-
-### dealing with objects:
-The following examples show different cases when typeof-in will use instanceof to compare the value with the constructor of a prototype.
-
-However, the library will not return an empty string('') but a "#Anonymous" type in the case of an instance of an anonymous prototype to improve readability. 
-```js
+	//use instanceof
     typeOf({}).In(Object) //true
-    typeOf({}).In('Object') //true
-    
+    typeOf({}).In({}) //true
     typeOf([]).In(Object)   //true
     typeOf([]).In(Array)    //true
-    typeOf([]).In('Object') //false
-    typeOf([]).In('Array')  //true
-    
-    typeOf(new TypeError()).In(Error)      //true
+    typeOf([]).In([])    //true
+	typeOf(new TypeError()).In(Error)      //true
     typeOf(new TypeError()).In(TypeError)  //true
+    
+    //use simple comparison of type
+    typeOf({}).In('Object') //true   
+    typeOf([]).In('Object') //false
+    typeOf([]).In('Array')  //true   
     typeOf(new TypeError()).In('TypeError')//true
     typeOf(new TypeError()).In('Error')    //false
     
     
-    //next example:
-
-    function Human(){}; // ES6: class Human {}
+    //more example ?
+    
+    function Human(){}; // ES6 equivalent: class Human {}
     var Person = Human;
     var Person2 = function Human(){};
 
     var person = new Person();
-    var _person = new Person();
-    var __person = new Human();
-    var person2 = new Person2();  
+    var person1 = new Human();
+    var person2 = new Person2();    
     
+    typeOf(person).getType(); //'Human'
+    typeOf(person2).getType(); //'Human'
+ 
     //#instance against instance
-    //if one of them has a valid constructor, use: x instanceof y.constructor
-    //otherwise, return false;
-    typeOf(person).In(_person); //true
-    typeOf(person).In(__person); //true    
+    //if one of them has a valid constructor
+    //use: x instanceof y.constructor; otherwise return false;
+    typeOf(person).In(person1); //true 
     typeOf(person).In(person2); //false
-    
+        
     //#instance against constructor
     typeOf(person).In(Person); //true   
     typeOf(person).In(Human); //true
     typeOf(person).In('Human'); //true
     
-    typeOf(person2).In(Human); //false
-    typeOf(person2).In('Human'); //true
+    typeOf(person2).In(Human); //false    
     typeOf(person2).In(Object); //true
+    typeOf(person2).In('Human'); //true
     typeOf(person2).In('Object'); //false
     
-    typeOf(person).getType(); //return 'Human'
-    typeOf(person2).getType(); //return 'Human'
-    typeOf(new function $(){}).getType(); //return '$'
-    typeOf(new function _(){}).getType(); //return '_'
     
     //#special cases: instance of Anonymous (it behaves as the above examples)
-    var myAnonymous = function(){};
-    typeOf(new myAnonymous).getType(); //return '#Anonymous'
-    typeOf(new myAnonymous).In('#Anonymous') //true
-    typeOf(new myAnonymous).In(myAnonymous) //true
-    typeOf(new myAnonymous).In(Object) //true
-    typeOf(new myAnonymous).In('Object') //false
-    typeOf(new myAnonymous).In(new(function (){})) //false
-    
+    var AnonymousClass = function(){}, myAnonymous = new AnonymousClass();
+    typeOf(myAnonymous).getType(); //return '#Anonymous'
+    typeOf(myAnonymous).In('#Anonymous') //true
+    typeOf(myAnonymous).In(AnonymousClass) //true    
+    typeOf(myAnonymous).In(Object) //true   
 ```
 
 
 ## Through a function
 (*decrease readability*)
 
-The recent version of typeof-in (>= 3.0.0) allows you to directly call the function in charge of the comparison, and by extension, not create an object every time you use typeOf() in your code. 
+The recent version of typeof-in (>= 3.0.0) allows you to directly call the function in charge of the comparison, and by extension, not create an object every time you use *typeOf()* in your code. 
 
 This feature works exactly like the previous examples.
 
 ```js
 //for comparison: with one argument (default behavior)
-typeOfIn('lolipop').In([Number, [], 'String']); 
+typeOfIn('lollipop').In([Number, [], 'String']); 
 
 //with more than one argument:
 var typeOfIn = typeOf;
-typeOfIn('lolipop','String');
-typeOfIn('lolipop',Number, [], 'String'); 
-typeOfIn('lolipop',[Number, [], 'String']); 
+typeOfIn('lollipop','String');
+typeOfIn('lollipop',Number, [], String); 
+typeOfIn('lollipop',[Number, [], String]); 
 
-//with zero argument : typeof-in expose getType() and In().
+//with zero argument : TypeOf-In expose getType() and In().
 var typeOf = require('typeof-in')();
-typeOf.getType('lolipop') //'String'
-typoOf.In('lolipop',Number, [], 'String');
-typoOf.In('lolipop',[Number, [], 'String']);
-
+typeOf.getType('lollipop') //'String'
+typoOf.In('lollipop',Number, [], 'String');
+typoOf.In('lollipop',[Number, [], 'String']);
 ```
-
-
-# Why use *typeof-in* ? 
-## JS is, somehow, broken
-```js
-console.log(typeof null) // 'object'
-console.log(null instanceof Object) //false
-``` 
-null shouldn't be an object... And even if it is the case in JavaScript, null is not even an instance of Object...
-
-```js
-console.log(typeof /regularexpression/) // 'object'
-```
-every time I see this line, I would expect *'regexp'*
-
-```js
-console.log(typeof new Number(42)) //'object'
-console.log(typeof 42) //'number'
-```
-new Number(42) and 42 have the same constructor name, but doesn't have the same type...
-(String and Boolean have the same "problem")
-
-```js
-console.log(typeof NaN) //'number'
-console.log(typeof new Number(NaN)) //'object'
-```
-And one of the most famous example in JS is NaN (a.K.a Not A Number) which return a type of number...
-
-### Funny thing about built-in objects:
-```js
-//All objects except Object.prototype are an instance of Object!
-Object.prototype instanceof Object //false
-Object.prototype instanceof Object.prototype.constructor //false
-typeOf(Object.prototype).In('Object') //true because Object.prototype.toString(Object.prototype) return '[Object Object]'
-
-//let's go deeper:
-Number.prototype.valueOf() //return 0
-Array.prototype.valueOf() // return [],
-Boolean.prototype.valueOf() // return false,
-String.prototype.valueOf() // return ""
-
-//so, each prototypes return a default instance, but... let's take one of them, for example Number.prototype
-
-Number.prototype instanceof Number //false
-Number.prototype instanceof Number.prototype.constructor //false
-Number.prototype instanceof Object //true
-typeof Number.prototype // 'object'
-typeOf(Number.prototype).In('Number') //true because Object.prototype.toString(Number.prototype) return '[Object Number]'
-
-//this is quite evil...
-```
-
-## typeof-in supports:
-
-- Regex
-- Multi choices
-- both: new String('test') and 'test' return the same type
-- same thing with *Numbers* and *Booleans*
-- NaN, undefined, null values have their own types 
-- use instanceof when necessary: typeOf(instance).In(constructor)
-- and more!
-
-In some ways, it is the fusion of **typeof** and **instanceof**
-
-## You can check the following types:
-
-> - 'Boolean' / 'String' / 'Number' / 'Symbol' 
->
-> - 'NaN' / 'Undefined' / 'Null'
->
-> - 'Function' / 'GeneratorFunction' / 'Iterator' / 'Promise
->
-> - Error / TypeError / ...
->
-> - HTMLDocument / ...
->
-> - RegExp
->
-> - Array / ArrayBuffer / UInt32Array / (Weak)Map / (Weak)Set / ...
->
-> - built-in Objects like JSON and Math
->
->   and many more... (in fact, you can check almost everything)
-
-[JavaScript reference](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects)
-
-## Important
-
-[typeof--](https://www.npmjs.com/package/typeof--) uses **constructor(.name)** when possible, and is therefore influenced by the change of the constructor function!
-
-Which imply that: an object "A" deriving from another object "B" will have the constructor of "B" and not "A", you can avoid this problem by using Object.assign, _.assign or _.extend...
-
-Moreover, any change on the constructor will modify the type returned (cf: [See the table of typeof--](https://github.com/d-mon-/typeof--#tables-of-common-values) ).
-
-To avoid such problem, you must trigger **instanceof** by passing constructors.
-```js
-var typeOf = require('typeof-in');
-
-function Example(){};
-
-var test = new Example('test'); 
-//before constructor corruption
-typeOf(test).In('Example') //true
-typeOf(test).In('Object')  //false
-typeOf(test).In(Example)   //true
-typeOf(test).In(Object)    //true
-
-Object.getPrototypeOf(test).constructor = test.constructor = function hacked(){}
-
-//after constructor corruption
-typeOf(test).In('Example') //false
-typeOf(test).In('Object')  //true
-typeOf(test).In(Example)   //true
-typeOf(test).In(Object)    //true
-```
-
-
 
 # with requireJS (AMD)
 
@@ -299,7 +243,7 @@ require.config({
             baseUrl: "/",
             paths: {
                 'typeof--':'./typeof--', //typeof-- directory path
-                'typeOf':'./index' //typeOf index file path
+                'typeOf':'./index' //TypeOf-In: index.js file path
             }
         });
 
@@ -312,13 +256,18 @@ require.config({
 [see the following example](https://github.com/d-mon-/typeOf/tree/master/example)
 
 # TypeOf only
-In the case you only need the function used to retrieve the type of a value as a *String* (like typeof), you might be interested in the following library:
- 
-[typeof--](https://www.npmjs.com/package/typeof--)
+In the case you only need the function used to retrieve the type of your values as a *string* (like **typeof**), you might be interested by using [typeof-- directly](https://www.npmjs.com/package/typeof--)
 
 # NPM commands
 > npm install typeof-in --save
 >
 > npm test
     
+# About the environment
+This library was created with **Node.JS V4** in mind. Therefore, this library will use ES6 features as soon as *Node.JS* supports [Rest parameters](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/rest_parameters) 
+
+Sorry for the capital letter in the **In()** method. **IE6** doesn't like when I use the **in** keyword...
+
+**you should consider using [lodash](https://lodash.com) before TypeOf-In, especially for simple cases**
+
 Finally, I'm open to any suggestions
