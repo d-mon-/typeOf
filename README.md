@@ -76,7 +76,7 @@ TypeOf-In uses [typeof--](https://www.npmjs.com/package/typeof--) instead of **t
 > 
 > - **and more!**
 
-[table of type returned by typeof-- (as string)](https://www.npmjs.com/package/typeof--#tables-of-common-values)  
+[table of type returned by typeof-- (as string)](https://www.npmjs.com/package/typeof--#table-of-common-values)  
 
 # Usage:
 ```js
