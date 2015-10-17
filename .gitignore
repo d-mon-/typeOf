@@ -2,6 +2,8 @@
 ### nodejs template
 # IntelliJ project files
 .idea
+*.old
 *.iml
-node_modules
 *.log
+*.bat
+/node_modules

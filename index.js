@@ -2,31 +2,33 @@
  * Created by GUERIN Olivier, on 11/09/2015.
  * Twitter: @MisterRaton
  */
-;
-(function (factory) {
-        var path = 'typeof--';
+;(function (factory) {
         if (typeof exports !== 'undefined') {
-            var typeOf = require(path);
-            var getFunctionName = require(path + '/getFunctionName');
-            var getConstructor = require(path + '/getConstructor');
+            var typeOf = require('typeof--');
+            var getFunctionName = require('typeof--/getFunctionName');
+            var getConstructor = require('typeof--/getConstructor');
 
             if (typeof module !== 'undefined' && module.exports) {
                 exports = module.exports = factory(typeOf, getFunctionName, getConstructor);
             }
             exports.typeOf = factory(typeOf, getFunctionName, getConstructor);
-        }
-        if (typeof define === 'function' && define.amd) {
-            define([path + '/index', path + '/getFunctionName', path + '/getConstructor'], factory);
+        }else if (typeof define === 'function' && define.amd) {
+            define(['typeof--/index','typeof--/getFunctionName', 'typeof--/getFunctionName'], factory);
         }
     }(function (typeOf, getFunctionName, getConstructor, undefined) {
         "use strict";
-        var arraySlice = Array.prototype.slice;
-
-        function TypeOfBuilder(value) {
+        function TypeOfBuilder(value, settings) {
+            /**
+             * store if we need to force object.prototype.toString in typeof--
+             * @constant
+             * @type {String}
+             * @private
+             */
+            var FORCE_OBJECT_TOSTRING = settings.force;
             /**
              * store if value is an Object
              * @Constant
-             * @type {boolean}
+             * @type {Boolean}
              * @private
              */
             var IS_OBJECT = typeof value === "object";
@@ -36,7 +38,7 @@
              * @private
              * @type {String}
              */
-            var VALUE_TYPE = typeOf(value);
+            var VALUE_TYPE = typeOf(value, FORCE_OBJECT_TOSTRING);
             /**
              * store constructor of value
              * @private
@@ -52,7 +54,7 @@
              * @private
              */
             function _in(arg) {
-                var arg_type = typeOf(arg);
+                var arg_type = typeOf(arg, FORCE_OBJECT_TOSTRING);
                 switch (arg_type) {
                     case '#Null':
                     case '#Undefined':
@@ -65,8 +67,8 @@
                     case 'RegExp':
                         return arg.test(VALUE_TYPE);
                     case 'Array':
-                        if (arg.length === 0){
-                            return  VALUE_TYPE === 'Array';
+                        if (arg.length === 0) {
+                            return VALUE_TYPE === 'Array';
                         }
                         for (var i = 0, l = arg.length; i < l; i++) {
                             if (_in(arg[i]) === true) {
@@ -90,17 +92,18 @@
                 }
             }
 
-            //in case we don't want to create an Object. (it does not expose this.In & this.getType)
-            if (arguments.length === 2) {
-                return _in(arguments[1]);
+            //in case we don't want to create an Object.
+            if (settings.hasOwnProperty('types')) {
+                return _in(settings.types);
             } else {
                 /**
                  * call _in function to check if type is among arguments
                  * @public
+                 * @param {*} types
                  * @returns {Boolean}
                  */
-                this.In = function () { //this.in is not supported by IE6
-                    return (arguments.length === 1) ? _in(arguments[0]) : _in(arraySlice.call(arguments));
+                this.In = function (types) { //this.in is not supported by IE6
+                    return _in(types);
                 };
                 /**
                  * return type
@@ -112,24 +115,22 @@
             }
         }
 
-        return function factory() {
-            function __in(args) {
-                return (args.length === 2) ? TypeOfBuilder(args[0], args[1]) : TypeOfBuilder(args[0], arraySlice.call(args, 1));
+        return function factory(value, types, forceObjectToString) {
+            if (arguments.length === 1 || types === 'forceObjectToString') {
+                return new TypeOfBuilder(value, {force: types});
             }
-            if (arguments.length === 1) {
-                return new TypeOfBuilder(arguments[0]);
-            }
-            if (arguments.length === 0) {
+            if (arguments.length === 0) { //expose methods
                 return {
-                    'getType': function getType(value) {
-                        return typeOf(value);
+                    'getType': function getType(value, force) {
+                        return typeOf(value, force);
                     },
-                    'In': function () {
-                        return __in(arguments)
+                    'In': function (value, types, forceObjectToString) {
+                        return TypeOfBuilder(value, {types: types, force: forceObjectToString});
                     }
                 };
             }
-            return __in(arguments);
+            //return _in result
+            return TypeOfBuilder(value, {types: types, force: forceObjectToString});
         };
     })
 );
